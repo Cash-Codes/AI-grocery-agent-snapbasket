@@ -1,0 +1,63 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# Build artefacts
+.next/
+out/
+dist/
+build/
+*.tsbuildinfo
+next-env.d.ts
+
+# Local databases
+data/
+*.db
+*.sqlite
+*.sqlite-journal
+
+# Trigger.dev
+.trigger/
+.triggerdev/
+
+# Env files
+.env
+.env.local
+.env.*.local
+.env.development.local
+.env.production.local
+
+# Vercel
+.vercel
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.pem
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-debug.log*
+
+# Coverage
+coverage/
+*.lcov
+
+# Misc
+.cache/
+docs/
