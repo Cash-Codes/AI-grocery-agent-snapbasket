@@ -7,13 +7,13 @@ export default function HomePage() {
         </p>
         <h1 className="text-4xl font-semibold tracking-tight">SnapBasket</h1>
         <p className="text-zinc-600">
-          A durable AI grocery agent. Upload a grocery list photo, get a basket
-          back, approve before checkout.
+          A durable AI grocery agent. Upload a grocery list photo, get a basket back, approve before
+          checkout.
         </p>
       </header>
       <section className="rounded-lg border border-zinc-200 bg-white p-4 text-sm text-zinc-600">
-        The full UI lands in Phase 7. Until then, this is a placeholder so the
-        scaffold can be verified end-to-end.
+        The full UI lands in Phase 7. Until then, this is a placeholder so the scaffold can be
+        verified end-to-end.
       </section>
     </main>
   );
