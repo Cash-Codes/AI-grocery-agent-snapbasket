@@ -1,3 +1,4 @@
+import { mkdirSync } from "node:fs";
 import path from "node:path";
 
 import Database from "better-sqlite3";
@@ -8,6 +9,8 @@ import * as schema from "./schema";
 
 const url = process.env.DATABASE_URL ?? path.resolve(process.cwd(), "data/snapbasket.db");
 const migrationsFolder = path.resolve(process.cwd(), "drizzle");
+
+mkdirSync(path.dirname(url), { recursive: true });
 
 const sqlite = new Database(url);
 sqlite.pragma("journal_mode = WAL");

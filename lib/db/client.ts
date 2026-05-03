@@ -1,5 +1,6 @@
 import "server-only";
 
+import { mkdirSync } from "node:fs";
 import path from "node:path";
 
 import Database from "better-sqlite3";
@@ -15,6 +16,7 @@ let _db: ReturnType<typeof drizzle<typeof schema>> | undefined;
 export function getDb() {
   if (!_db) {
     const url = process.env.DATABASE_URL ?? DEFAULT_DB_PATH;
+    mkdirSync(path.dirname(url), { recursive: true });
     _sqlite = new Database(url);
     _sqlite.pragma("journal_mode = WAL");
     _sqlite.pragma("foreign_keys = ON");
