@@ -5,6 +5,7 @@ import { getDb } from "@/lib/db/client";
 import {
   basketItems,
   baskets,
+  checkoutSessions,
   policyResults,
   productCandidates,
   productIntents,
@@ -45,6 +46,14 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
       null)
     : null;
 
+  const checkoutSession = basket
+    ? (db
+        .select()
+        .from(checkoutSessions)
+        .where(eq(checkoutSessions.basketId, basket.id))
+        .all()[0] ?? null)
+    : null;
+
   const events = db.select().from(workflowEvents).where(eq(workflowEvents.runId, runId)).all();
 
   return NextResponse.json({
@@ -54,6 +63,7 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
     basket,
     items,
     policy,
+    checkoutSession,
     events,
   });
 }

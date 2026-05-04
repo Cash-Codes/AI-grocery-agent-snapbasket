@@ -90,7 +90,10 @@ export function RunView({ runId }: { runId: string }) {
       {status === "COMPLETED" && Boolean(data.basket) && (
         <ReceiptCard
           totalPence={(data.basket as { totalPence: number }).totalPence}
-          sessionId={null /* TODO Phase 13 polish: thread sessionId via API response */}
+          sessionId={
+            (data.checkoutSession as { providerSessionId: string } | null)?.providerSessionId ??
+            null
+          }
         />
       )}
 

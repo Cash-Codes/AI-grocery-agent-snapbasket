@@ -126,3 +126,80 @@ describe("POST /api/runs", () => {
     expect(res.status).toBe(400);
   });
 });
+
+describe("GET /api/runs/[runId]", () => {
+  it("includes checkoutSession in the response when one exists", async () => {
+    const { getDb } = await import("@/lib/db/client");
+    const db = getDb();
+
+    db.insert(schema.runs)
+      .values({
+        id: "run_for_get_test",
+        imageId: "img_test_runs",
+        userId: "user_default",
+        correlationId: "corr_get_test",
+        status: "COMPLETED",
+      })
+      .run();
+
+    db.insert(schema.baskets)
+      .values({
+        id: "b_for_get_test",
+        runId: "run_for_get_test",
+        providerBasketId: "p_for_get_test",
+        totalPence: 1234,
+        itemCount: 1,
+        idempotencyKey: "idem_get_test",
+      })
+      .run();
+
+    db.insert(schema.checkoutSessions)
+      .values({
+        id: "cs_for_get_test",
+        basketId: "b_for_get_test",
+        providerSessionId: "mock_session_abc123",
+        status: "COMPLETED",
+        consentJson: JSON.stringify({ approved: true, decidedBy: "user_default" }),
+      })
+      .run();
+
+    const { GET } = await import("@/app/api/runs/[runId]/route");
+    const req = new Request("http://localhost/api/runs/run_for_get_test");
+    const res = await GET(req as never, {
+      params: Promise.resolve({ runId: "run_for_get_test" }),
+    });
+    expect(res.status).toBe(200);
+
+    const body = (await res.json()) as {
+      checkoutSession: { providerSessionId: string; status: string } | null;
+    };
+    expect(body.checkoutSession).not.toBeNull();
+    expect(body.checkoutSession?.providerSessionId).toBe("mock_session_abc123");
+    expect(body.checkoutSession?.status).toBe("COMPLETED");
+  });
+
+  it("returns checkoutSession=null when no checkout exists", async () => {
+    const { getDb } = await import("@/lib/db/client");
+    const db = getDb();
+
+    db.insert(schema.runs)
+      .values({
+        id: "run_no_checkout",
+        imageId: "img_test_runs",
+        userId: "user_default",
+        correlationId: "corr_no_checkout",
+        status: "PENDING",
+      })
+      .run();
+
+    const { GET } = await import("@/app/api/runs/[runId]/route");
+    const req = new Request("http://localhost/api/runs/run_no_checkout");
+    const res = await GET(req as never, {
+      params: Promise.resolve({ runId: "run_no_checkout" }),
+    });
+    expect(res.status).toBe(200);
+
+    const body = (await res.json()) as { checkoutSession: unknown };
+    expect(body.checkoutSession).toBeNull();
+  });
+});

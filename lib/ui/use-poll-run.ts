@@ -20,6 +20,7 @@ export interface RunSnapshot {
   basket: unknown | null;
   items: unknown[];
   policy: unknown | null;
+  checkoutSession: unknown | null;
   events: Array<{
     id: string;
     runId: string;
