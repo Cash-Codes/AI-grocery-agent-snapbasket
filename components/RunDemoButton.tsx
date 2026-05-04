@@ -33,6 +33,7 @@ export function RunDemoButton() {
     <div className="flex flex-col items-start gap-2">
       <Button
         size="lg"
+        variant="outline"
         onClick={startDemo}
         disabled={loading}
         className="rounded-full px-8 py-6 text-base"

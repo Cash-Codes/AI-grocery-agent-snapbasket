@@ -3500,7 +3500,7 @@ packages:
   systeminformation@5.23.8:
     resolution: {integrity: sha512-Osd24mNKe6jr/YoXLLK3k8TMdzaxDffhpCxgkfgBHcapykIkd50HXThM3TCEuHO2pPuCsSx2ms/SunqhU5MmsQ==}
     engines: {node: '>=8.0.0'}
-    os: [darwin, linux, win32, freebsd, openbsd, netbsd, sunos, android]
+    os: [darwin, linux, win32, freebsd, openbsd, netbsd, sunos android]
     hasBin: true
 
   tailwind-merge@3.5.0:

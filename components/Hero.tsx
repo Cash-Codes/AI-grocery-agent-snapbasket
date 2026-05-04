@@ -1,4 +1,5 @@
 import { RunDemoButton } from "./RunDemoButton";
+import { UploadCard } from "./UploadCard";
 
 export function Hero() {
   return (
@@ -11,8 +12,20 @@ export function Hero() {
         Built on durable workflow orchestration so retries, pauses and partial failures don&apos;t
         break the experience.
       </p>
-      <div className="pt-2">
-        <RunDemoButton />
+      <div className="space-y-4 pt-2">
+        <p className="text-xs uppercase tracking-widest text-zinc-500">
+          No account or real checkout &middot; mock mode only
+        </p>
+        <UploadCard />
+        <div className="flex items-center gap-3" role="separator" aria-label="or">
+          <span className="h-px flex-1 bg-zinc-200" />
+          <span className="text-xs uppercase tracking-widest text-zinc-400">or</span>
+          <span className="h-px flex-1 bg-zinc-200" />
+        </div>
+        <div>
+          <p className="mb-2 text-sm text-zinc-500">No grocery photo handy? Try the demo.</p>
+          <RunDemoButton />
+        </div>
       </div>
     </section>
   );
