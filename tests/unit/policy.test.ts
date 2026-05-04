@@ -87,4 +87,37 @@ describe("validateBasket", () => {
     const result = validateBasket(ctx(makeBasket({ totalPence: 6_000 }), makeCandidate()));
     expect(result.requiresExplicitApproval).toBe(true);
   });
+
+  it("does NOT flag BUDGET_EXCEEDED when basket total exactly matches max", () => {
+    const result = validateBasket(ctx(makeBasket({ totalPence: 5_000 }), makeCandidate()));
+    const budgetFlags = result.flags.filter((f) => f.kind === "BUDGET_EXCEEDED");
+    expect(budgetFlags).toHaveLength(0);
+  });
+
+  it("flags BUDGET_EXCEEDED for total = max + 1 pence (boundary)", () => {
+    const result = validateBasket(ctx(makeBasket({ totalPence: 5_001 }), makeCandidate()));
+    const budgetFlags = result.flags.filter((f) => f.kind === "BUDGET_EXCEEDED");
+    expect(budgetFlags).toHaveLength(1);
+  });
+
+  it("can stack multiple flag kinds on the same item (DIETARY_VIOLATION + LOW_CONFIDENCE_MATCH)", () => {
+    // chicken triggers DIETARY_VIOLATION (vegetarian rule), score < 0.6 triggers LOW_CONFIDENCE_MATCH.
+    const result = validateBasket(
+      ctx(makeBasket(), makeCandidate({ name: "British Chicken Breast 500g", score: 0.3 })),
+    );
+    const kinds = result.flags.map((f) => f.kind);
+    expect(kinds).toContain("DIETARY_VIOLATION");
+    expect(kinds).toContain("LOW_CONFIDENCE_MATCH");
+  });
+
+  it("returns ok=true with empty basket (no items)", () => {
+    const candidate = makeCandidate();
+    const result = validateBasket({
+      basket: makeBasket({ items: [], totalPence: 0, itemCount: 0 }),
+      candidates: new Map([[candidate.id, candidate]]),
+      profile: basicProfile,
+    });
+    expect(result.ok).toBe(true);
+    expect(result.flags).toHaveLength(0);
+  });
 });
