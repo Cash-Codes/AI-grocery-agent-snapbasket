@@ -18,7 +18,7 @@ const serif = Source_Serif_4({
 });
 
 export const metadata: Metadata = {
-  title: "SnapBasket — durable AI grocery agent",
+  title: "SnapBasket - durable AI grocery agent",
   description:
     "An exploration of durable orchestration for agentic AI: upload a grocery photo, get a basket, approve before checkout.",
 };

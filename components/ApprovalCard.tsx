@@ -79,7 +79,7 @@ export function ApprovalCard({
           </label>
           <Textarea
             id="reason"
-            placeholder="E.g. 'OK for this week', 'Reject — over budget', etc."
+            placeholder="E.g. 'OK for this week', 'Reject - over budget', etc."
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             disabled={submitting}

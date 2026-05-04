@@ -73,7 +73,7 @@ export const requireHumanApproval = task({
           tokenId: tokenHandle.id,
         });
 
-        // Durable pause — workflow run is checkpointed; resumes when token completes
+        // Durable pause - workflow run is checkpointed; resumes when token completes
         // or the timeout fires. The 24h timeout is set on the token at creation time.
         const result = await wait.forToken<ApprovalDecisionWaitpoint>(tokenHandle.id);
 

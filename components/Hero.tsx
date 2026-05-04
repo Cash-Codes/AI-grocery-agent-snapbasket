@@ -7,8 +7,8 @@ export function Hero() {
       <h1 className="font-serif text-5xl tracking-tight text-zinc-900 sm:text-6xl">SnapBasket</h1>
       <p className="max-w-2xl text-lg leading-relaxed text-zinc-600">
         Upload a photo of a handwritten grocery list. We extract the items, match them to a
-        catalogue, validate against your preferences, and pause for your approval before finalizing.
-        Built on durable workflow orchestration so retries, pauses, and partial failures don&apos;t
+        catalogue, validate against your preferences and pause for your approval before finalizing.
+        Built on durable workflow orchestration so retries, pauses and partial failures don&apos;t
         break the experience.
       </p>
       <div className="pt-2">

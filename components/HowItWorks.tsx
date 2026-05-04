@@ -4,7 +4,7 @@ const STEPS = [
   {
     n: 1,
     title: "Snap your list",
-    body: "Upload a photo or use the bundled sample. We hash, dedup, and store it. Same image twice never produces a duplicate run.",
+    body: "Upload a photo or use the bundled sample. We hash, dedup and store it. Same image twice never produces a duplicate run.",
   },
   {
     n: 2,
