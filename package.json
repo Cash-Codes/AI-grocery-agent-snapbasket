@@ -21,9 +21,13 @@
     "prepare": "husky",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx lib/db/migrate.ts",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "trigger:dev": "pnpm dlx trigger.dev@latest dev",
+    "trigger:deploy": "pnpm dlx trigger.dev@latest deploy"
   },
   "dependencies": {
+    "@opentelemetry/api": "^1.9.1",
+    "@trigger.dev/sdk": "^4.4.5",
     "better-sqlite3": "^12.9.0",
     "drizzle-orm": "^0.45.2",
     "next": "16.2.4",
@@ -37,6 +41,7 @@
     "@commitlint/config-conventional": "^20.5.3",
     "@eslint/js": "^9.39.4",
     "@tailwindcss/postcss": "^4",
+    "@trigger.dev/build": "^4.4.5",
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^20",
     "@types/react": "^19",
