@@ -1,10 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
 
-// We re-derive the schema in the test rather than importing it directly,
+//rederive the schema in the test rather than importing it directly,
 // because the module's top-level `parseEnv()` call would fail on missing
-// env vars in a unit-test context. This tests the schema's shape + rules
-// without coupling to the singleton.
+// env vars in a unit test context. This tests the schema's shape + rules without coupling to the singleton.
 
 const EnvSchema = z.object({
   DATABASE_URL: z.string().min(1).optional(),
