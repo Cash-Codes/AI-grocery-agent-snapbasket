@@ -1,14 +1,16 @@
 "use client";
 
+import { ApprovalCard } from "@/components/ApprovalCard";
 import { BasketReview } from "@/components/BasketReview";
 import { IntentList } from "@/components/IntentList";
+import { ReceiptCard } from "@/components/ReceiptCard";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { WorkflowTimeline } from "@/components/WorkflowTimeline";
 import type { WorkflowEventRow } from "@/lib/db/schema";
-import type { RunStatus } from "@/lib/domain/types";
+import type { PolicyFlag, RunStatus } from "@/lib/domain/types";
 import { usePollRun } from "@/lib/ui/use-poll-run";
 
 export function RunView({ runId }: { runId: string }) {
@@ -72,6 +74,56 @@ export function RunView({ runId }: { runId: string }) {
           candidatesByIntent={data.candidatesByIntent as never}
           policy={data.policy as never}
         />
+      )}
+
+      {status === "AWAITING_APPROVAL" && Boolean(data.basket) && Boolean(data.policy) && (
+        <ApprovalCard
+          runId={runId}
+          flags={JSON.parse((data.policy as { flagsJson: string }).flagsJson) as PolicyFlag[]}
+          requiresExplicitApproval={
+            (data.policy as { requiresExplicitApproval: boolean }).requiresExplicitApproval
+          }
+          onApproved={() => void refetch()}
+        />
+      )}
+
+      {status === "COMPLETED" && Boolean(data.basket) && (
+        <ReceiptCard
+          totalPence={(data.basket as { totalPence: number }).totalPence}
+          sessionId={null /* TODO Phase 13 polish: thread sessionId via API response */}
+        />
+      )}
+
+      {status === "REJECTED" && (
+        <Card className="border-zinc-300 bg-zinc-50">
+          <CardContent className="p-6">
+            <p className="text-sm text-zinc-700">Run rejected. No checkout finalized.</p>
+          </CardContent>
+        </Card>
+      )}
+
+      {status === "TIMED_OUT" && (
+        <Card className="border-zinc-300 bg-zinc-50">
+          <CardContent className="p-6">
+            <p className="text-sm text-zinc-700">Approval timed out (24h elapsed). Run ended.</p>
+          </CardContent>
+        </Card>
+      )}
+
+      {status === "FAILED" && (
+        <Card className="border-red-300 bg-red-50">
+          <CardContent className="space-y-2 p-6">
+            <p className="text-sm font-medium text-red-700">Workflow failed.</p>
+            {data.run.failureStep && (
+              <p className="text-sm text-zinc-700">
+                Failed at step:{" "}
+                <code className="rounded bg-zinc-100 px-1.5 py-0.5 text-xs">
+                  {data.run.failureStep}
+                </code>
+              </p>
+            )}
+          </CardContent>
+        </Card>
       )}
     </div>
   );
