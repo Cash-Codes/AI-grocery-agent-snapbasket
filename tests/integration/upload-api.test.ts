@@ -64,4 +64,28 @@ describe("ingestImage helper", () => {
     expect(second.imageId).toBe(first.imageId);
     expect(second.isDuplicate).toBe(true);
   });
+
+  it("rejects files larger than 8 MB", async () => {
+    const { ingestImage, UploadError } = await import("@/lib/server/upload");
+    const oversize = new Uint8Array(8 * 1024 * 1024 + 1); // 8MB + 1 byte
+    expect(() => ingestImage({ bytes: oversize, mime: "image/png" })).toThrowError(UploadError);
+  });
+
+  it("accepts image/jpeg as a valid MIME type", async () => {
+    const { ingestImage } = await import("@/lib/server/upload");
+    const result = ingestImage({
+      bytes: new Uint8Array([0xff, 0xd8, 0xff, 0xe0]), // JPEG magic
+      mime: "image/jpeg",
+    });
+    expect(result.imageId).toMatch(/^img_/);
+  });
+
+  it("accepts image/webp as a valid MIME type", async () => {
+    const { ingestImage } = await import("@/lib/server/upload");
+    const result = ingestImage({
+      bytes: new Uint8Array([0x52, 0x49, 0x46, 0x46]), // RIFF header
+      mime: "image/webp",
+    });
+    expect(result.imageId).toMatch(/^img_/);
+  });
 });
