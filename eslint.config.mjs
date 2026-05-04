@@ -10,6 +10,7 @@ export default [
   {
     ignores: [
       ".next/**",
+      ".trigger/**",
       "node_modules/**",
       "coverage/**",
       "drizzle/**",
