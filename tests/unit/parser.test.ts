@@ -97,7 +97,7 @@ describe("parseGroceryText", () => {
     const byName = (n: string) => result.find((r) => r.canonicalName === n);
     expect(byName("milk")?.category).toBe("dairy");
     // "eggs" → "egg" via normalize, no inferCategory rule → "other".
-    // This is intentional — eggs are taxonomically borderline (dairy vs bakery vs own section).
+    // This is intentional - eggs are taxonomically borderline (dairy vs bakery vs own section).
     expect(byName("egg")?.category).toBe("other");
     expect(byName("banana")?.category).toBe("produce");
     expect(byName("pasta")?.quantity).toBe(2);

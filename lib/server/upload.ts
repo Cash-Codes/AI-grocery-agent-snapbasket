@@ -70,7 +70,7 @@ export function ingestImage(input: { bytes: Uint8Array; mime: string }): UploadR
     };
   }
 
-  // New upload — write to disk and insert.
+  // New upload - write to disk and insert.
   mkdirSync(UPLOAD_DIR, { recursive: true });
   const ext = extensionFor(input.mime);
   const storagePath = path.join(UPLOAD_DIR, `${sha256}.${ext}`);

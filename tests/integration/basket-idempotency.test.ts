@@ -27,7 +27,7 @@ beforeAll(() => {
   // operates on it. Must be set BEFORE the dynamic import of the commerce provider.
   process.env.DATABASE_URL = dbPath;
 
-  // Seed FOUR distinct runs — one per test scope — so each test respects the
+  // Seed FOUR distinct runs - one per test scope - so each test respects the
   // baskets.runId UNIQUE constraint.
   const seedRun = (suffix: string) => {
     db.insert(schema.images)
@@ -135,7 +135,7 @@ afterAll(() => {
 });
 
 describe("MockUcpCommerceProvider.createBasket idempotency", () => {
-  it("same idempotency key + same run returns the same basket — regardless of input items", async () => {
+  it("same idempotency key + same run returns the same basket - regardless of input items", async () => {
     const { commerceProvider } = await import("@/lib/providers/commerce");
     const idempotencyKey = "idem_basket_proof";
 
@@ -168,7 +168,7 @@ describe("MockUcpCommerceProvider.createBasket idempotency", () => {
     const a = await commerceProvider.createBasket({
       userId: "user_idem",
       runId: "run_idem_a",
-      idempotencyKey: "idem_basket_proof", // same key as test 1 — returns existing
+      idempotencyKey: "idem_basket_proof", // same key as test 1 - returns existing
       items: [{ candidateId: "cand_milk_a", quantity: 1 }],
     });
 
@@ -199,7 +199,7 @@ describe("MockUcpCommerceProvider.createBasket idempotency", () => {
       .run();
 
     // A second insert with a DIFFERENT runId (run_idem_d) but the SAME idempotencyKey
-    // must throw — proving idempotencyKey uniqueness fires independently of runId.
+    // must throw - proving idempotencyKey uniqueness fires independently of runId.
     expect(() =>
       db
         .insert(schema.baskets)

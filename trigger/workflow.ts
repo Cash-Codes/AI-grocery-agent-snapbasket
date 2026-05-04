@@ -97,7 +97,7 @@ export const snapbasketWorkflow = task({
             )
             .unwrap();
 
-          // Step 5: enrichItems per intent (sequential — these are no-ops in Phase 5)
+          // Step 5: enrichItems per intent (sequential - these are no-ops in Phase 5)
           for (const intentId of normalizeResult.intentIds) {
             await enrichItems
               .triggerAndWait(
