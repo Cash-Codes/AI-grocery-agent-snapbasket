@@ -10,10 +10,12 @@ import type {
   CheckoutSessionSchema,
   CheckoutStatusSchema,
   EventStatusSchema,
+  OrderStatusSchema,
   PolicyFlagSchema,
   ProductCandidateSchema,
   ProductCategorySchema,
   ProductIntentSchema,
+  ProductMatchSchema,
   ProductQuerySchema,
   RunStatusSchema,
   UserConsentSchema,
@@ -41,3 +43,6 @@ export type CheckoutSession = z.infer<typeof CheckoutSessionSchema>;
 export type ProductQuery = z.infer<typeof ProductQuerySchema>;
 export type BasketItemDraft = z.infer<typeof BasketItemDraftSchema>;
 export type BasketPatch = z.infer<typeof BasketPatchSchema>;
+
+export type ProductMatch = z.infer<typeof ProductMatchSchema>;
+export type OrderStatus = z.infer<typeof OrderStatusSchema>;
