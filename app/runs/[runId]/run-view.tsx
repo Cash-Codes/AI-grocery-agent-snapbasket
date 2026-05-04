@@ -1,5 +1,7 @@
 "use client";
 
+import { BasketReview } from "@/components/BasketReview";
+import { IntentList } from "@/components/IntentList";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -55,6 +57,22 @@ export function RunView({ runId }: { runId: string }) {
           <WorkflowTimeline events={data.events as WorkflowEventRow[]} />
         </CardContent>
       </Card>
+
+      {data.intents.length > 0 && (
+        <IntentList
+          intents={data.intents as never}
+          candidatesByIntent={data.candidatesByIntent as never}
+        />
+      )}
+
+      {Boolean(data.basket) && (
+        <BasketReview
+          basket={data.basket as never}
+          items={data.items as never}
+          candidatesByIntent={data.candidatesByIntent as never}
+          policy={data.policy as never}
+        />
+      )}
     </div>
   );
 }
