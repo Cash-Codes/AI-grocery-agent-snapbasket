@@ -1,0 +1,362 @@
+[
+  {
+    "providerProductId": "prov_dairy_001",
+    "name": "Sainsbury's British Whole Milk 2L",
+    "category": "dairy",
+    "pricePence": 245,
+    "unit": "litre",
+    "thumbnailUrl": null,
+    "searchTokens": ["milk", "whole milk", "dairy"]
+  },
+  {
+    "providerProductId": "prov_dairy_002",
+    "name": "Sainsbury's Semi-Skimmed Milk 2L",
+    "category": "dairy",
+    "pricePence": 230,
+    "unit": "litre",
+    "thumbnailUrl": null,
+    "searchTokens": ["milk", "semi-skimmed milk", "dairy"]
+  },
+  {
+    "providerProductId": "prov_dairy_003",
+    "name": "Alpro Oat Milk 1L",
+    "category": "dairy",
+    "pricePence": 195,
+    "unit": "litre",
+    "thumbnailUrl": null,
+    "searchTokens": ["oat milk", "milk", "dairy alternative"]
+  },
+  {
+    "providerProductId": "prov_dairy_004",
+    "name": "Fage Total Greek Yogurt 500g",
+    "category": "dairy",
+    "pricePence": 295,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["yogurt", "greek yogurt", "fage", "dairy"]
+  },
+  {
+    "providerProductId": "prov_dairy_005",
+    "name": "Cathedral City Mature Cheddar 200g",
+    "category": "dairy",
+    "pricePence": 320,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["cheese", "cheddar", "dairy"]
+  },
+  {
+    "providerProductId": "prov_dairy_006",
+    "name": "Lurpak Slightly Salted Butter 250g",
+    "category": "dairy",
+    "pricePence": 350,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["butter", "lurpak", "dairy"]
+  },
+  {
+    "providerProductId": "prov_produce_001",
+    "name": "Bananas, loose (per kg)",
+    "category": "produce",
+    "pricePence": 120,
+    "unit": "kg",
+    "thumbnailUrl": null,
+    "searchTokens": ["banana", "bananas", "fruit"]
+  },
+  {
+    "providerProductId": "prov_produce_002",
+    "name": "Cherry Tomatoes 250g",
+    "category": "produce",
+    "pricePence": 180,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["tomato", "tomatoes", "cherry tomato", "vegetables"]
+  },
+  {
+    "providerProductId": "prov_produce_003",
+    "name": "Vine Tomatoes 500g",
+    "category": "produce",
+    "pricePence": 220,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["tomato", "tomatoes", "vine tomato", "vegetables"]
+  },
+  {
+    "providerProductId": "prov_produce_004",
+    "name": "Gala Apples (6-pack)",
+    "category": "produce",
+    "pricePence": 200,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["apple", "apples", "gala", "fruit"]
+  },
+  {
+    "providerProductId": "prov_produce_005",
+    "name": "Brown Onions, loose (per kg)",
+    "category": "produce",
+    "pricePence": 95,
+    "unit": "kg",
+    "thumbnailUrl": null,
+    "searchTokens": ["onion", "onions", "vegetables"]
+  },
+  {
+    "providerProductId": "prov_produce_006",
+    "name": "Carrots, loose (per kg)",
+    "category": "produce",
+    "pricePence": 80,
+    "unit": "kg",
+    "thumbnailUrl": null,
+    "searchTokens": ["carrot", "carrots", "vegetables"]
+  },
+  {
+    "providerProductId": "prov_produce_007",
+    "name": "Maris Piper Potatoes 2kg",
+    "category": "produce",
+    "pricePence": 175,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["potato", "potatoes", "vegetables"]
+  },
+  {
+    "providerProductId": "prov_produce_008",
+    "name": "Iceberg Lettuce",
+    "category": "produce",
+    "pricePence": 100,
+    "unit": "item",
+    "thumbnailUrl": null,
+    "searchTokens": ["lettuce", "salad", "vegetables"]
+  },
+  {
+    "providerProductId": "prov_pantry_001",
+    "name": "Sainsbury's Penne Pasta 500g",
+    "category": "pantry",
+    "pricePence": 95,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["pasta", "penne"]
+  },
+  {
+    "providerProductId": "prov_pantry_002",
+    "name": "Sainsbury's Spaghetti 500g",
+    "category": "pantry",
+    "pricePence": 95,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["pasta", "spaghetti"]
+  },
+  {
+    "providerProductId": "prov_pantry_003",
+    "name": "Tilda Basmati Rice 1kg",
+    "category": "pantry",
+    "pricePence": 350,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["rice", "basmati", "tilda"]
+  },
+  {
+    "providerProductId": "prov_pantry_004",
+    "name": "Kellogg's Cornflakes 500g",
+    "category": "pantry",
+    "pricePence": 280,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["cereal", "cornflakes", "kellogg"]
+  },
+  {
+    "providerProductId": "prov_pantry_005",
+    "name": "Quaker Porridge Oats 1kg",
+    "category": "pantry",
+    "pricePence": 220,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["cereal", "oats", "porridge", "quaker"]
+  },
+  {
+    "providerProductId": "prov_pantry_006",
+    "name": "Plain White Flour 1.5kg",
+    "category": "pantry",
+    "pricePence": 110,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["flour", "baking"]
+  },
+  {
+    "providerProductId": "prov_pantry_007",
+    "name": "Filippo Berio Olive Oil 500ml",
+    "category": "pantry",
+    "pricePence": 425,
+    "unit": "bottle",
+    "thumbnailUrl": null,
+    "searchTokens": ["oil", "olive oil"]
+  },
+  {
+    "providerProductId": "prov_pantry_008",
+    "name": "Heinz Baked Beans 415g",
+    "category": "pantry",
+    "pricePence": 110,
+    "unit": "tin",
+    "thumbnailUrl": null,
+    "searchTokens": ["beans", "baked beans", "heinz"]
+  },
+  {
+    "providerProductId": "prov_household_001",
+    "name": "Fairy Original Washing Up Liquid 433ml",
+    "category": "household",
+    "pricePence": 160,
+    "unit": "bottle",
+    "thumbnailUrl": null,
+    "searchTokens": ["washing up liquid", "fairy", "washing up", "soap", "cleaning"]
+  },
+  {
+    "providerProductId": "prov_household_002",
+    "name": "Andrex Classic Clean Toilet Roll 9-pack",
+    "category": "household",
+    "pricePence": 600,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["toilet roll", "tissue", "andrex"]
+  },
+  {
+    "providerProductId": "prov_household_003",
+    "name": "Plenty Kitchen Towel 4-pack",
+    "category": "household",
+    "pricePence": 425,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["paper towel", "kitchen towel", "plenty"]
+  },
+  {
+    "providerProductId": "prov_household_004",
+    "name": "Finish All-in-One Dishwasher Tabs 30-pack",
+    "category": "household",
+    "pricePence": 750,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["dishwasher", "detergent", "finish"]
+  },
+  {
+    "providerProductId": "prov_meat_001",
+    "name": "British Chicken Breast Fillets 500g",
+    "category": "meat",
+    "pricePence": 425,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["chicken", "chicken breast", "poultry"]
+  },
+  {
+    "providerProductId": "prov_meat_002",
+    "name": "British Lean Beef Mince 500g",
+    "category": "meat",
+    "pricePence": 425,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["beef", "mince", "beef mince"]
+  },
+  {
+    "providerProductId": "prov_meat_003",
+    "name": "Scottish Salmon Fillets 240g",
+    "category": "meat",
+    "pricePence": 525,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["salmon", "fish", "scottish salmon"]
+  },
+  {
+    "providerProductId": "prov_meat_004",
+    "name": "Sainsbury's Streaky Bacon 200g",
+    "category": "meat",
+    "pricePence": 220,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["bacon", "streaky bacon"]
+  },
+  {
+    "providerProductId": "prov_bakery_001",
+    "name": "Hovis Soft White Sliced 800g",
+    "category": "bakery",
+    "pricePence": 145,
+    "unit": "loaf",
+    "thumbnailUrl": null,
+    "searchTokens": ["bread", "white bread", "hovis"]
+  },
+  {
+    "providerProductId": "prov_bakery_002",
+    "name": "Warburtons Wholemeal 800g",
+    "category": "bakery",
+    "pricePence": 165,
+    "unit": "loaf",
+    "thumbnailUrl": null,
+    "searchTokens": ["bread", "brown bread", "wholemeal", "warburtons"]
+  },
+  {
+    "providerProductId": "prov_bakery_003",
+    "name": "French Baguette",
+    "category": "bakery",
+    "pricePence": 100,
+    "unit": "item",
+    "thumbnailUrl": null,
+    "searchTokens": ["bread", "baguette", "french bread"]
+  },
+  {
+    "providerProductId": "prov_beverages_001",
+    "name": "Tropicana Smooth Orange Juice 1L",
+    "category": "beverages",
+    "pricePence": 250,
+    "unit": "bottle",
+    "thumbnailUrl": null,
+    "searchTokens": ["juice", "orange juice", "tropicana"]
+  },
+  {
+    "providerProductId": "prov_beverages_002",
+    "name": "Highland Spring Still Water 6 x 500ml",
+    "category": "beverages",
+    "pricePence": 175,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["water", "still water", "highland spring"]
+  },
+  {
+    "providerProductId": "prov_beverages_003",
+    "name": "Sainsbury's Sparkling Water 1L",
+    "category": "beverages",
+    "pricePence": 65,
+    "unit": "bottle",
+    "thumbnailUrl": null,
+    "searchTokens": ["water", "sparkling water"]
+  },
+  {
+    "providerProductId": "prov_frozen_001",
+    "name": "Birds Eye Garden Peas 800g",
+    "category": "frozen",
+    "pricePence": 245,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["peas", "frozen peas", "birds eye"]
+  },
+  {
+    "providerProductId": "prov_frozen_002",
+    "name": "Goodfella's Stonebaked Margherita Pizza",
+    "category": "frozen",
+    "pricePence": 295,
+    "unit": "item",
+    "thumbnailUrl": null,
+    "searchTokens": ["pizza", "frozen pizza", "margherita"]
+  },
+  {
+    "providerProductId": "prov_other_001",
+    "name": "Eggs, free range medium 6-pack",
+    "category": "other",
+    "pricePence": 175,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["egg", "eggs", "free range eggs"]
+  },
+  {
+    "providerProductId": "prov_other_002",
+    "name": "Duracell AA Batteries 4-pack",
+    "category": "other",
+    "pricePence": 425,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["batteries", "aa batteries", "duracell"]
+  }
+]
