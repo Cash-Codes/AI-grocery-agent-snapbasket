@@ -150,3 +150,21 @@ export const BasketPatchSchema = z.object({
   add: z.array(BasketItemDraftSchema).optional(),
   remove: z.array(z.string()).optional(), // candidateIds to remove
 });
+
+// provider responses
+
+export const ProductMatchSchema = z.object({
+  providerProductId: z.string(),
+  name: z.string(),
+  pricePence: z.number().int().nonnegative(),
+  unit: z.string(),
+  thumbnailUrl: z.string().url().nullable(),
+  score: z.number().min(0).max(1),
+});
+
+export const OrderStatusSchema = z.object({
+  sessionId: z.string(),
+  basketId: z.string(),
+  status: CheckoutStatusSchema,
+  finalizedAt: z.string().datetime().nullable(),
+});
