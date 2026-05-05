@@ -84,6 +84,13 @@ COPY --from=build --chown=nextjs:nodejs /app/node_modules/file-uri-to-path ./nod
 # Migrations need to run on the ephemeral disk. Drizzle reads from /app/drizzle.
 COPY --from=build --chown=nextjs:nodejs /app/drizzle ./drizzle
 
+# Pre-create the ephemeral data directory writable by the nextjs user.
+# /app/data is the SQLite location; /app/data/uploads holds uploaded images.
+# The non-root user can't create dirs inside the root-owned /app at runtime,
+# so we make these up-front with the right ownership.
+RUN mkdir -p /app/data/uploads \
+ && chown -R nextjs:nodejs /app/data
+
 USER nextjs
 
 EXPOSE 3000
