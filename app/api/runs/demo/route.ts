@@ -5,7 +5,7 @@ import path from "node:path";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
-import { getDb } from "@/lib/db/client";
+import { ensureMigrated, getDb } from "@/lib/db/client";
 import { runs } from "@/lib/db/schema";
 import { newCorrelationId } from "@/lib/observability/correlation";
 import { logger } from "@/lib/observability/logger";
@@ -29,14 +29,16 @@ export async function POST() {
     return internalError("Demo image not found on disk");
   }
 
-  const upload = ingestImage({ bytes, mime: "image/png" });
+  await ensureMigrated();
+  const upload = await ingestImage({ bytes, mime: "image/png" });
 
   const db = getDb();
   const runId = `run_${randomUUID()}`;
   const correlationId = newCorrelationId();
   const userId = "user_default";
 
-  db.insert(runs)
+  await db
+    .insert(runs)
     .values({
       id: runId,
       imageId: upload.imageId,
@@ -56,7 +58,7 @@ export async function POST() {
       mime: "image/png",
     });
 
-    db.update(runs).set({ triggerRunId }).where(eq(runs.id, runId)).run();
+    await db.update(runs).set({ triggerRunId }).where(eq(runs.id, runId)).run();
 
     logger.info("demo run started", {
       runId,
@@ -77,7 +79,7 @@ export async function POST() {
       correlationId,
       error: err instanceof Error ? err.message : String(err),
     });
-    db.update(runs).set({ status: "FAILED" }).where(eq(runs.id, runId)).run();
+    await db.update(runs).set({ status: "FAILED" }).where(eq(runs.id, runId)).run();
     return internalError("Failed to trigger demo run");
   }
 }

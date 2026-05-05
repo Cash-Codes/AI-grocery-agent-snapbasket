@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
   const bytes = new Uint8Array(await file.arrayBuffer());
 
   try {
-    const result = ingestImage({ bytes, mime: file.type });
+    const result = await ingestImage({ bytes, mime: file.type });
     logger.info("upload accepted", {
       imageId: result.imageId,
       sha256: result.sha256,

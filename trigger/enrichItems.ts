@@ -32,7 +32,7 @@ export const enrichItems = task({
         attempt,
       },
       async () => {
-        emitWorkflowEvent({
+        await emitWorkflowEvent({
           runId: input.runId,
           step: "enrichItems",
           status: attempt > 1 ? "retrying" : "started",
@@ -45,7 +45,7 @@ export const enrichItems = task({
         //no op for now, stubbing shape for future enrichment for llm ambiguity res, user pref etc
         const output = OutputSchema.parse({ intentId: input.intentId, enriched: true });
 
-        emitWorkflowEvent({
+        await emitWorkflowEvent({
           runId: input.runId,
           step: "enrichItems",
           status: "succeeded",

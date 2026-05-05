@@ -4,7 +4,7 @@ import { queue, task } from "@trigger.dev/sdk";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 
-import { getDb } from "@/lib/db/client";
+import { ensureMigrated, getDb } from "@/lib/db/client";
 import { productCandidates, productIntents } from "@/lib/db/schema";
 import { emitWorkflowEvent } from "@/lib/observability/events";
 import { withSpan } from "@/lib/observability/otel";
@@ -45,7 +45,7 @@ export const matchProducts = task({
         intentId: input.intentId,
       },
       async () => {
-        emitWorkflowEvent({
+        await emitWorkflowEvent({
           runId: input.runId,
           step: "matchProducts",
           status: attempt > 1 ? "retrying" : "started",
@@ -56,12 +56,11 @@ export const matchProducts = task({
 
         maybeInjectFault("matchProducts", attempt);
 
+        await ensureMigrated();
         const db = getDb();
-        const intent = db
-          .select()
-          .from(productIntents)
-          .where(eq(productIntents.id, input.intentId))
-          .all()[0];
+        const intent = (
+          await db.select().from(productIntents).where(eq(productIntents.id, input.intentId)).all()
+        )[0];
         if (!intent) {
           throw new Error(`matchProducts: intent ${input.intentId} not found`);
         }
@@ -79,7 +78,8 @@ export const matchProducts = task({
         const candidateIds: string[] = [];
         for (const match of matches) {
           const candidateId = `cand_${randomUUID()}`;
-          db.insert(productCandidates)
+          await db
+            .insert(productCandidates)
             .values({
               id: candidateId,
               intentId: input.intentId,
@@ -97,7 +97,7 @@ export const matchProducts = task({
 
         const output = OutputSchema.parse({ intentId: input.intentId, candidateIds });
 
-        emitWorkflowEvent({
+        await emitWorkflowEvent({
           runId: input.runId,
           step: "matchProducts",
           status: "succeeded",

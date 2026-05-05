@@ -2,26 +2,24 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 
-import Database from "better-sqlite3";
-import { drizzle } from "drizzle-orm/better-sqlite3";
-import { migrate } from "drizzle-orm/better-sqlite3/migrator";
+import { createClient, type Client } from "@libsql/client";
+import { drizzle } from "drizzle-orm/libsql";
+import { migrate } from "drizzle-orm/libsql/migrator";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import * as schema from "@/lib/db/schema";
 
 let tempDir: string;
 let dbPath: string;
-let sqlite: Database.Database;
+let client: Client;
 let db: ReturnType<typeof drizzle<typeof schema>>;
 
-beforeAll(() => {
+beforeAll(async () => {
   tempDir = mkdtempSync(path.join(tmpdir(), "snapbasket-basket-"));
   dbPath = path.join(tempDir, "test.db");
-  sqlite = new Database(dbPath);
-  sqlite.pragma("journal_mode = WAL");
-  sqlite.pragma("foreign_keys = ON");
-  db = drizzle(sqlite, { schema });
-  migrate(db, { migrationsFolder: path.resolve(process.cwd(), "drizzle") });
+  client = createClient({ url: `file:${dbPath}` });
+  db = drizzle(client, { schema });
+  await migrate(db, { migrationsFolder: path.resolve(process.cwd(), "drizzle") });
 
   // Point the production client at this test DB so MockUcpCommerceProvider.getDb()
   // operates on it. Must be set BEFORE the dynamic import of the commerce provider.
@@ -29,8 +27,9 @@ beforeAll(() => {
 
   // Seed FOUR distinct runs - one per test scope - so each test respects the
   // baskets.runId UNIQUE constraint.
-  const seedRun = (suffix: string) => {
-    db.insert(schema.images)
+  const seedRun = async (suffix: string) => {
+    await db
+      .insert(schema.images)
       .values({
         id: `img_${suffix}`,
         sha256: `sha_${suffix}`,
@@ -39,7 +38,8 @@ beforeAll(() => {
         storagePath: `/tmp/${suffix}.png`,
       })
       .run();
-    db.insert(schema.runs)
+    await db
+      .insert(schema.runs)
       .values({
         id: `run_${suffix}`,
         imageId: `img_${suffix}`,
@@ -48,13 +48,14 @@ beforeAll(() => {
       })
       .run();
   };
-  seedRun("idem_a");
-  seedRun("idem_b");
-  seedRun("idem_c");
-  seedRun("idem_d");
+  await seedRun("idem_a");
+  await seedRun("idem_b");
+  await seedRun("idem_c");
+  await seedRun("idem_d");
 
   // Intent + two candidates for run_idem_a (test 1 picks between them).
-  db.insert(schema.productIntents)
+  await db
+    .insert(schema.productIntents)
     .values({
       id: "intent_a",
       runId: "run_idem_a",
@@ -69,7 +70,8 @@ beforeAll(() => {
     })
     .run();
 
-  db.insert(schema.productCandidates)
+  await db
+    .insert(schema.productCandidates)
     .values({
       id: "cand_milk_a",
       intentId: "intent_a",
@@ -83,7 +85,8 @@ beforeAll(() => {
     })
     .run();
 
-  db.insert(schema.productCandidates)
+  await db
+    .insert(schema.productCandidates)
     .values({
       id: "cand_milk_b",
       intentId: "intent_a",
@@ -98,7 +101,8 @@ beforeAll(() => {
     .run();
 
   // Intent + candidate for run_idem_b (test 2's second basket).
-  db.insert(schema.productIntents)
+  await db
+    .insert(schema.productIntents)
     .values({
       id: "intent_b",
       runId: "run_idem_b",
@@ -113,7 +117,8 @@ beforeAll(() => {
     })
     .run();
 
-  db.insert(schema.productCandidates)
+  await db
+    .insert(schema.productCandidates)
     .values({
       id: "cand_milk_c",
       intentId: "intent_b",
@@ -129,7 +134,7 @@ beforeAll(() => {
 });
 
 afterAll(() => {
-  sqlite.close();
+  client.close();
   rmSync(tempDir, { recursive: true, force: true });
   delete process.env.DATABASE_URL;
 });
@@ -184,10 +189,11 @@ describe("MockUcpCommerceProvider.createBasket idempotency", () => {
     expect(b.runId).toBe("run_idem_b");
   });
 
-  it("the DB UNIQUE index on baskets.idempotencyKey is the actual enforcer", () => {
+  it("the DB UNIQUE index on baskets.idempotencyKey is the actual enforcer", async () => {
     // Direct DB insert (bypassing the provider's early-return logic) into run_idem_c
     // with a fresh idempotencyKey.
-    db.insert(schema.baskets)
+    await db
+      .insert(schema.baskets)
       .values({
         id: "b_direct_a",
         runId: "run_idem_c",
@@ -200,8 +206,11 @@ describe("MockUcpCommerceProvider.createBasket idempotency", () => {
 
     // A second insert with a DIFFERENT runId (run_idem_d) but the SAME idempotencyKey
     // must throw - proving idempotencyKey uniqueness fires independently of runId.
-    expect(() =>
-      db
+    // libsql wraps the underlying SQLITE_CONSTRAINT error in a generic "Failed query" message;
+    // the original UNIQUE violation surfaces on `.cause.message`.
+    let captured: unknown;
+    try {
+      await db
         .insert(schema.baskets)
         .values({
           id: "b_direct_b",
@@ -211,7 +220,12 @@ describe("MockUcpCommerceProvider.createBasket idempotency", () => {
           itemCount: 0,
           idempotencyKey: "idem_basket_direct",
         })
-        .run(),
-    ).toThrowError(/UNIQUE/i);
+        .run();
+    } catch (err) {
+      captured = err;
+    }
+    expect(captured).toBeInstanceOf(Error);
+    const cause = (captured as Error & { cause?: Error }).cause;
+    expect(cause?.message ?? "").toMatch(/UNIQUE/i);
   });
 });

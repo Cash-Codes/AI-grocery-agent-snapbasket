@@ -13,7 +13,7 @@ import { parseGroceryIntent } from "./parseGroceryIntent";
 import { requireHumanApproval } from "./requireHumanApproval";
 import { validateBasketPolicy } from "./validateBasketPolicy";
 
-import { getDb } from "@/lib/db/client";
+import { ensureMigrated, getDb } from "@/lib/db/client";
 import { runs } from "@/lib/db/schema";
 import { logger } from "@/lib/observability/logger";
 import { withSpan } from "@/lib/observability/otel";
@@ -41,8 +41,9 @@ export const snapbasketWorkflow = task({
         step: "root",
       },
       async () => {
+        await ensureMigrated();
         const db = getDb();
-        db.update(runs).set({ status: "RUNNING" }).where(eq(runs.id, input.runId)).run();
+        await db.update(runs).set({ status: "RUNNING" }).where(eq(runs.id, input.runId)).run();
 
         try {
           // Step 1: ingestImage (idempotent on sha256)
@@ -181,7 +182,7 @@ export const snapbasketWorkflow = task({
           }
 
           // The approvalTokenId was persisted on the runs row by requireHumanApproval.
-          const runRow = db.select().from(runs).where(eq(runs.id, input.runId)).all()[0];
+          const runRow = (await db.select().from(runs).where(eq(runs.id, input.runId)).all())[0];
           if (!runRow?.approvalTokenId) {
             throw new Error("snapbasket.run: missing approvalTokenId on runs row");
           }
@@ -204,7 +205,7 @@ export const snapbasketWorkflow = task({
             sessionId: finalize.sessionId,
           };
         } catch (err) {
-          db.update(runs).set({ status: "FAILED" }).where(eq(runs.id, input.runId)).run();
+          await db.update(runs).set({ status: "FAILED" }).where(eq(runs.id, input.runId)).run();
           logger.error("workflow failed", {
             runId: input.runId,
             correlationId: input.correlationId,

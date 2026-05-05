@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import { task } from "@trigger.dev/sdk";
 import { z } from "zod";
 
-import { getDb } from "@/lib/db/client";
+import { ensureMigrated, getDb } from "@/lib/db/client";
 import { productIntents } from "@/lib/db/schema";
 import { emitWorkflowEvent } from "@/lib/observability/events";
 import { withSpan } from "@/lib/observability/otel";
@@ -45,7 +45,7 @@ export const normalizeItems = task({
         attempt,
       },
       async () => {
-        emitWorkflowEvent({
+        await emitWorkflowEvent({
           runId: input.runId,
           step: "normalizeItems",
           status: "started",
@@ -53,12 +53,14 @@ export const normalizeItems = task({
           correlationId: input.correlationId,
         });
 
+        await ensureMigrated();
         const db = getDb();
         const intentIds: string[] = [];
 
         for (const intent of input.intents) {
           const id = `intent_${randomUUID()}`;
-          db.insert(productIntents)
+          await db
+            .insert(productIntents)
             .values({
               id,
               runId: input.runId,
@@ -87,7 +89,7 @@ export const normalizeItems = task({
 
         const output = OutputSchema.parse({ intentIds });
 
-        emitWorkflowEvent({
+        await emitWorkflowEvent({
           runId: input.runId,
           step: "normalizeItems",
           status: "succeeded",

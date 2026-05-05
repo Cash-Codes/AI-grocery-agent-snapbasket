@@ -2,7 +2,7 @@ import { task } from "@trigger.dev/sdk";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 
-import { getDb } from "@/lib/db/client";
+import { ensureMigrated, getDb } from "@/lib/db/client";
 import { checkoutSessions, runs } from "@/lib/db/schema";
 import { emitWorkflowEvent } from "@/lib/observability/events";
 import { withSpan } from "@/lib/observability/otel";
@@ -36,7 +36,7 @@ export const finalizeMockCheckout = task({
         attempt,
       },
       async () => {
-        emitWorkflowEvent({
+        await emitWorkflowEvent({
           runId: input.runId,
           step: "finalizeMockCheckout",
           status: attempt > 1 ? "retrying" : "started",
@@ -58,18 +58,20 @@ export const finalizeMockCheckout = task({
         });
 
         // Mark the session COMPLETED in our DB (mock has no real fulfillment lifecycle).
+        await ensureMigrated();
         const db = getDb();
-        db.update(checkoutSessions)
+        await db
+          .update(checkoutSessions)
           .set({ status: "COMPLETED", finalizedAt: new Date() })
           .where(eq(checkoutSessions.id, session.id))
           .run();
 
         // Mark the run COMPLETED.
-        db.update(runs).set({ status: "COMPLETED" }).where(eq(runs.id, input.runId)).run();
+        await db.update(runs).set({ status: "COMPLETED" }).where(eq(runs.id, input.runId)).run();
 
         const output = OutputSchema.parse({ sessionId: session.id, status: "COMPLETED" });
 
-        emitWorkflowEvent({
+        await emitWorkflowEvent({
           runId: input.runId,
           step: "finalizeMockCheckout",
           status: "succeeded",

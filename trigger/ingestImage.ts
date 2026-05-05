@@ -33,7 +33,7 @@ export const ingestImage = task({
         attempt,
       },
       async () => {
-        emitWorkflowEvent({
+        await emitWorkflowEvent({
           runId: input.runId,
           step: "ingestImage",
           status: "started",
@@ -48,7 +48,7 @@ export const ingestImage = task({
 
         const output = OutputSchema.parse({ imageId: input.imageId, sha256: input.sha256 });
 
-        emitWorkflowEvent({
+        await emitWorkflowEvent({
           runId: input.runId,
           step: "ingestImage",
           status: "succeeded",

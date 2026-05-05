@@ -1,2 +1,2 @@
-export { getDb, closeDb } from "./client";
+export { getDb, closeDb, ensureMigrated } from "./client";
 export * from "./schema";

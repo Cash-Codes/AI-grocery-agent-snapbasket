@@ -2,9 +2,9 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 
-import Database from "better-sqlite3";
-import { drizzle } from "drizzle-orm/better-sqlite3";
-import { migrate } from "drizzle-orm/better-sqlite3/migrator";
+import { createClient, type Client } from "@libsql/client";
+import { drizzle } from "drizzle-orm/libsql";
+import { migrate } from "drizzle-orm/libsql/migrator";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
 import * as schema from "@/lib/db/schema";
@@ -18,21 +18,19 @@ vi.mock("@trigger.dev/sdk", () => ({
 
 let tempDir: string;
 let dbPath: string;
-let sqlite: Database.Database;
+let client: Client;
 
-beforeAll(() => {
+beforeAll(async () => {
   tempDir = mkdtempSync(path.join(tmpdir(), "snapbasket-demo-"));
   dbPath = path.join(tempDir, "test.db");
-  sqlite = new Database(dbPath);
-  sqlite.pragma("journal_mode = WAL");
-  sqlite.pragma("foreign_keys = ON");
-  const db = drizzle(sqlite, { schema });
-  migrate(db, { migrationsFolder: path.resolve(process.cwd(), "drizzle") });
+  client = createClient({ url: `file:${dbPath}` });
+  const db = drizzle(client, { schema });
+  await migrate(db, { migrationsFolder: path.resolve(process.cwd(), "drizzle") });
   process.env.DATABASE_URL = dbPath;
 });
 
 afterAll(() => {
-  sqlite.close();
+  client.close();
   rmSync(tempDir, { recursive: true, force: true });
   delete process.env.DATABASE_URL;
 });
@@ -79,7 +77,9 @@ describe("POST /api/runs/demo", () => {
     const { getDb } = await import("@/lib/db/client");
     const { eq } = await import("drizzle-orm");
     const db = getDb();
-    const runRow = db.select().from(schema.runs).where(eq(schema.runs.id, body.runId)).all()[0];
+    const runRow = (
+      await db.select().from(schema.runs).where(eq(schema.runs.id, body.runId)).all()
+    )[0];
     expect(runRow?.triggerRunId).toBe("fake_trigger_run_demo_1");
     expect(runRow?.imageId).toBe(body.imageId);
   });

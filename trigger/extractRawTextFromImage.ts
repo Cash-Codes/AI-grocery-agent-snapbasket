@@ -38,7 +38,7 @@ export const extractRawTextFromImage = task({
         attempt,
       },
       async () => {
-        emitWorkflowEvent({
+        await emitWorkflowEvent({
           runId: input.runId,
           step: "extractRawTextFromImage",
           status: attempt > 1 ? "retrying" : "started",
@@ -68,7 +68,7 @@ export const extractRawTextFromImage = task({
           rawTextHash,
         });
 
-        emitWorkflowEvent({
+        await emitWorkflowEvent({
           runId: input.runId,
           step: "extractRawTextFromImage",
           status: "succeeded",

@@ -2,7 +2,7 @@ import { task } from "@trigger.dev/sdk";
 import { and, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 
-import { getDb } from "@/lib/db/client";
+import { ensureMigrated, getDb } from "@/lib/db/client";
 import { productCandidates, productIntents, runs } from "@/lib/db/schema";
 import { emitWorkflowEvent } from "@/lib/observability/events";
 import { withSpan } from "@/lib/observability/otel";
@@ -34,7 +34,7 @@ export const buildBasket = task({
         attempt,
       },
       async () => {
-        emitWorkflowEvent({
+        await emitWorkflowEvent({
           runId: input.runId,
           step: "buildBasket",
           status: "started",
@@ -42,11 +42,12 @@ export const buildBasket = task({
           correlationId: input.correlationId,
         });
 
+        await ensureMigrated();
         const db = getDb();
-        const run = db.select().from(runs).where(eq(runs.id, input.runId)).all()[0];
+        const run = (await db.select().from(runs).where(eq(runs.id, input.runId)).all())[0];
         if (!run) throw new Error(`buildBasket: run ${input.runId} not found`);
 
-        const intentRows = db
+        const intentRows = await db
           .select({ id: productIntents.id })
           .from(productIntents)
           .where(eq(productIntents.runId, input.runId))
@@ -56,7 +57,7 @@ export const buildBasket = task({
         const selected =
           intentIds.length === 0
             ? []
-            : db
+            : await db
                 .select({
                   id: productCandidates.id,
                   intentId: productCandidates.intentId,
@@ -80,7 +81,7 @@ export const buildBasket = task({
 
         const output = OutputSchema.parse({ basketId: basket.id, totalPence: basket.totalPence });
 
-        emitWorkflowEvent({
+        await emitWorkflowEvent({
           runId: input.runId,
           step: "buildBasket",
           status: "succeeded",

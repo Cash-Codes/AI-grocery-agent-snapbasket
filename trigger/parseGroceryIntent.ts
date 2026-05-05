@@ -43,7 +43,7 @@ export const parseGroceryIntent = task({
         attempt,
       },
       async () => {
-        emitWorkflowEvent({
+        await emitWorkflowEvent({
           runId: input.runId,
           step: "parseGroceryIntent",
           status: "started",
@@ -54,7 +54,7 @@ export const parseGroceryIntent = task({
         const intents = parseGroceryText(input.rawText);
         const output = OutputSchema.parse({ intents });
 
-        emitWorkflowEvent({
+        await emitWorkflowEvent({
           runId: input.runId,
           step: "parseGroceryIntent",
           status: "succeeded",

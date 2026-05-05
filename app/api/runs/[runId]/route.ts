@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { type NextRequest, NextResponse } from "next/server";
 
-import { getDb } from "@/lib/db/client";
+import { ensureMigrated, getDb } from "@/lib/db/client";
 import {
   basketItems,
   baskets,
@@ -22,39 +22,51 @@ interface RouteContext {
 
 export async function GET(_request: NextRequest, { params }: RouteContext) {
   const { runId } = await params;
+  await ensureMigrated();
   const db = getDb();
 
-  const run = db.select().from(runs).where(eq(runs.id, runId)).all()[0];
+  const run = (await db.select().from(runs).where(eq(runs.id, runId)).all())[0];
   if (!run) return notFound(`Run ${runId} not found`);
 
-  const intents = db.select().from(productIntents).where(eq(productIntents.runId, runId)).all();
+  const intents = await db
+    .select()
+    .from(productIntents)
+    .where(eq(productIntents.runId, runId))
+    .all();
   const candidatesByIntent: Record<string, unknown[]> = {};
   for (const intent of intents) {
-    candidatesByIntent[intent.id] = db
+    candidatesByIntent[intent.id] = await db
       .select()
       .from(productCandidates)
       .where(eq(productCandidates.intentId, intent.id))
       .all();
   }
 
-  const basket = db.select().from(baskets).where(eq(baskets.runId, runId)).all()[0] ?? null;
+  const basket = (await db.select().from(baskets).where(eq(baskets.runId, runId)).all())[0] ?? null;
   const items = basket
-    ? db.select().from(basketItems).where(eq(basketItems.basketId, basket.id)).all()
+    ? await db.select().from(basketItems).where(eq(basketItems.basketId, basket.id)).all()
     : [];
   const policy = basket
-    ? (db.select().from(policyResults).where(eq(policyResults.basketId, basket.id)).all()[0] ??
-      null)
+    ? ((
+        await db.select().from(policyResults).where(eq(policyResults.basketId, basket.id)).all()
+      )[0] ?? null)
     : null;
 
   const checkoutSession = basket
-    ? (db
-        .select()
-        .from(checkoutSessions)
-        .where(eq(checkoutSessions.basketId, basket.id))
-        .all()[0] ?? null)
+    ? ((
+        await db
+          .select()
+          .from(checkoutSessions)
+          .where(eq(checkoutSessions.basketId, basket.id))
+          .all()
+      )[0] ?? null)
     : null;
 
-  const events = db.select().from(workflowEvents).where(eq(workflowEvents.runId, runId)).all();
+  const events = await db
+    .select()
+    .from(workflowEvents)
+    .where(eq(workflowEvents.runId, runId))
+    .all();
 
   return NextResponse.json({
     run,

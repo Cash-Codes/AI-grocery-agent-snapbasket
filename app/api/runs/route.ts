@@ -5,7 +5,7 @@ import { eq } from "drizzle-orm";
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-import { getDb } from "@/lib/db/client";
+import { ensureMigrated, getDb } from "@/lib/db/client";
 import { images, runs } from "@/lib/db/schema";
 import { newCorrelationId } from "@/lib/observability/correlation";
 import { logger } from "@/lib/observability/logger";
@@ -29,15 +29,17 @@ export async function POST(request: NextRequest) {
   const parsed = parseJsonBody(StartRunSchema, body);
   if (!parsed.ok) return parsed.res;
 
+  await ensureMigrated();
   const db = getDb();
-  const image = db.select().from(images).where(eq(images.id, parsed.data.imageId)).all()[0];
+  const image = (await db.select().from(images).where(eq(images.id, parsed.data.imageId)).all())[0];
   if (!image) return notFound(`Image ${parsed.data.imageId} not found`);
 
   const runId = `run_${randomUUID()}`;
   const correlationId = newCorrelationId();
   const userId = "user_default";
 
-  db.insert(runs)
+  await db
+    .insert(runs)
     .values({
       id: runId,
       imageId: parsed.data.imageId,
@@ -71,7 +73,7 @@ export async function POST(request: NextRequest) {
       mime: image.mime,
     });
 
-    db.update(runs).set({ triggerRunId }).where(eq(runs.id, runId)).run();
+    await db.update(runs).set({ triggerRunId }).where(eq(runs.id, runId)).run();
 
     logger.info("run started", { runId, correlationId, triggerRunId });
     return NextResponse.json({ runId, correlationId, triggerRunId }, { status: 201 });
@@ -81,7 +83,7 @@ export async function POST(request: NextRequest) {
       correlationId,
       error: err instanceof Error ? err.message : String(err),
     });
-    db.update(runs).set({ status: "FAILED" }).where(eq(runs.id, runId)).run();
+    await db.update(runs).set({ status: "FAILED" }).where(eq(runs.id, runId)).run();
     return internalError("Failed to trigger workflow");
   }
 }
