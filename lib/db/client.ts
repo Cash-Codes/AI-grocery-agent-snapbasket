@@ -5,6 +5,7 @@ import path from "node:path";
 
 import Database from "better-sqlite3";
 import { drizzle } from "drizzle-orm/better-sqlite3";
+import { migrate } from "drizzle-orm/better-sqlite3/migrator";
 
 import * as schema from "./schema";
 
@@ -21,6 +22,11 @@ export function getDb() {
     _sqlite.pragma("journal_mode = WAL");
     _sqlite.pragma("foreign_keys = ON");
     _db = drizzle(_sqlite, { schema });
+    // Apply migrations on first DB access. Idempotent because drizzle tracks
+    // applied migrations in __drizzle_migrations. Required for Cloud Run's
+    // ephemeral filesystem - every cold start gets a fresh SQLite file with
+    // no schema, so the runtime needs to bootstrap it on demand.
+    migrate(_db, { migrationsFolder: path.resolve(process.cwd(), "drizzle") });
   }
   return _db;
 }
