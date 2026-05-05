@@ -1,5 +1,4 @@
 import { PolicyFlagList } from "@/components/PolicyFlagList";
-import { Card, CardContent } from "@/components/ui/card";
 import type { PolicyFlag } from "@/lib/domain/types";
 import { formatPence } from "@/lib/ui/format";
 
@@ -39,7 +38,6 @@ export interface BasketReviewProps {
 }
 
 export function BasketReview({ basket, items, candidatesByIntent, policy }: BasketReviewProps) {
-  // Flatten candidatesByIntent into a single lookup map.
   const candidateMap = new Map<string, Candidate>();
   for (const list of Object.values(candidatesByIntent)) {
     for (const c of list) candidateMap.set(c.id, c);
@@ -48,43 +46,50 @@ export function BasketReview({ basket, items, candidatesByIntent, policy }: Bask
   const flags: PolicyFlag[] = policy ? (JSON.parse(policy.flagsJson) as PolicyFlag[]) : [];
 
   return (
-    <Card className="border-zinc-200">
-      <CardContent className="space-y-5 p-6">
-        <div className="flex items-baseline justify-between">
-          <h2 className="text-sm font-medium uppercase tracking-wide text-zinc-500">
-            Proposed basket
-          </h2>
-          <span className="font-mono text-lg font-semibold tabular-nums">
-            {formatPence(basket.totalPence)}
-          </span>
+    <section className="ring-frost border-border bg-card animate-fade-up space-y-5 rounded-2xl border p-5">
+      <div className="flex items-baseline justify-between">
+        <h2 className="text-muted-foreground/80 font-mono text-[10.5px] uppercase tracking-[0.22em]">
+          Proposed basket
+        </h2>
+        <span className="text-foreground font-num font-mono text-xl font-semibold tabular-nums">
+          {formatPence(basket.totalPence)}
+        </span>
+      </div>
+
+      <ul className="divide-border/60 divide-y">
+        {items.map((item) => {
+          const candidate = candidateMap.get(item.candidateId);
+          return (
+            <li
+              key={item.id}
+              className="flex items-baseline justify-between py-2.5 first:pt-0 last:pb-0"
+            >
+              <div>
+                <p className="text-foreground/90 text-[14px]">
+                  {candidate?.name ?? "Unknown product"}
+                </p>
+                {item.quantity !== 1 && (
+                  <p className="text-muted-foreground/70 font-mono text-[11px]">
+                    × {item.quantity}
+                  </p>
+                )}
+              </div>
+              <span className="text-foreground/80 font-num font-mono text-[12px] tabular-nums">
+                {formatPence(item.linePricePence)}
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+
+      {flags.length > 0 && (
+        <div className="border-border/60 space-y-3 border-t pt-4">
+          <p className="text-muted-foreground/80 font-mono text-[10.5px] uppercase tracking-[0.22em]">
+            Policy flags
+          </p>
+          <PolicyFlagList flags={flags} />
         </div>
-
-        <ul className="divide-y divide-zinc-200">
-          {items.map((item) => {
-            const candidate = candidateMap.get(item.candidateId);
-            return (
-              <li key={item.id} className="flex items-baseline justify-between py-2">
-                <div>
-                  <p className="text-sm">{candidate?.name ?? "Unknown product"}</p>
-                  {item.quantity !== 1 && (
-                    <p className="text-xs text-zinc-500">× {item.quantity}</p>
-                  )}
-                </div>
-                <span className="font-mono text-xs tabular-nums">
-                  {formatPence(item.linePricePence)}
-                </span>
-              </li>
-            );
-          })}
-        </ul>
-
-        {flags.length > 0 && (
-          <div className="space-y-2 pt-2">
-            <p className="text-xs uppercase tracking-widest text-zinc-500">Policy flags</p>
-            <PolicyFlagList flags={flags} />
-          </div>
-        )}
-      </CardContent>
-    </Card>
+      )}
+    </section>
   );
 }

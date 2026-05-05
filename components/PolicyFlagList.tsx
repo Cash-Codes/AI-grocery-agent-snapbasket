@@ -30,17 +30,21 @@ function describe(flag: PolicyFlag): string {
 export function PolicyFlagList({ flags }: { flags: PolicyFlag[] }) {
   if (flags.length === 0) return null;
   return (
-    <div className="flex flex-wrap gap-2">
-      {flags.map((flag, idx) => (
-        <span
-          key={idx}
-          className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs ${policyFlagColor(flag.kind)}`}
-        >
-          <span className="font-medium">{FLAG_LABELS[flag.kind]}</span>
-          {describe(flag) && <span className="opacity-75">·</span>}
-          {describe(flag) && <span>{describe(flag)}</span>}
-        </span>
-      ))}
+    <div className="flex flex-wrap gap-1.5">
+      {flags.map((flag, idx) => {
+        const detail = describe(flag);
+        return (
+          <span
+            key={idx}
+            className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 font-mono text-[10.5px] uppercase tracking-[0.12em] ${policyFlagColor(flag.kind)}`}
+          >
+            <span aria-hidden className="bg-current size-1 rounded-full opacity-80" />
+            <span className="font-semibold">{FLAG_LABELS[flag.kind]}</span>
+            {detail && <span className="opacity-60">·</span>}
+            {detail && <span className="font-normal normal-case tracking-normal">{detail}</span>}
+          </span>
+        );
+      })}
     </div>
   );
 }

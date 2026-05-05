@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -33,13 +34,23 @@ export function RunDemoButton() {
     <div className="flex flex-col items-start gap-2">
       <Button
         size="lg"
+        variant="outline"
         onClick={startDemo}
         disabled={loading}
-        className="rounded-full px-8 py-6 text-base"
+        className="border-border/70 hover:border-primary/40 hover:bg-secondary/70 hover:text-foreground group h-11 rounded-xl px-5 text-sm font-medium transition-all"
       >
-        {loading ? "Starting run..." : "Run demo"}
+        <span className="inline-flex items-center gap-2">
+          {loading ? "Starting run..." : "Run demo"}
+          {!loading && (
+            <ArrowRight
+              aria-hidden
+              className="text-muted-foreground group-hover:text-primary size-3.5 transition-all duration-200 group-hover:translate-x-0.5"
+              strokeWidth={2}
+            />
+          )}
+        </span>
       </Button>
-      {error && <p className="text-sm text-red-600">Couldn&apos;t start: {error}</p>}
+      {error && <p className="text-destructive text-sm">Couldn&apos;t start: {error}</p>}
     </div>
   );
 }

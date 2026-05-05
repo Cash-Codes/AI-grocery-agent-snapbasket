@@ -14,7 +14,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import { maybeInjectFault } from "@/lib/trigger/fault-injection";
 
-describe("retry-then-success proof — MOCK_FAULT_RATE boundary conditions", () => {
+describe("retry-then-success proof - MOCK_FAULT_RATE boundary conditions", () => {
   const ORIGINAL_RATE = process.env.MOCK_FAULT_RATE;
 
   afterEach(() => {
@@ -56,7 +56,7 @@ describe("retry-then-success proof — MOCK_FAULT_RATE boundary conditions", () 
     });
   });
 
-  describe("rate = 0 (never fault — default)", () => {
+  describe("rate = 0 (never fault - default)", () => {
     beforeEach(() => {
       process.env.MOCK_FAULT_RATE = "0";
     });

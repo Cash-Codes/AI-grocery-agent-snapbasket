@@ -116,4 +116,35 @@ describe("parseGroceryText", () => {
     const result = parseGroceryText("milk\n\n\neggs\n");
     expect(result).toHaveLength(2);
   });
+
+  it("splits compound items on '+' and '&' into separate intents", () => {
+    const result = parseGroceryText(
+      ["yellow mustard + honey", "oregano & onions", "red+green pepper"].join("\n"),
+    );
+    expect(result.map((r) => r.canonicalName)).toEqual([
+      "yellow mustard",
+      "honey",
+      "oregano",
+      "onion", // singular via normalize
+      "red pepper", // "pepper" borrowed from "green pepper" via color qualifier rule
+      "green pepper",
+    ]);
+  });
+
+  it("does NOT borrow a trailing noun for non-color qualifiers", () => {
+    // "honey" is a substantive noun, not a qualifier - it stays alone.
+    const result = parseGroceryText("yellow mustard + honey");
+    expect(result.map((r) => r.canonicalName)).toEqual(["yellow mustard", "honey"]);
+  });
+
+  it("preserves quantity per fragment when splitting compounds", () => {
+    const result = parseGroceryText("1kg flour + 500g sugar");
+    expect(result).toHaveLength(2);
+    expect(result[0]?.canonicalName).toBe("flour");
+    expect(result[0]?.quantity).toBe(1);
+    expect(result[0]?.unit).toBe("kg");
+    expect(result[1]?.canonicalName).toBe("sugar");
+    expect(result[1]?.quantity).toBe(500);
+    expect(result[1]?.unit).toBe("g");
+  });
 });

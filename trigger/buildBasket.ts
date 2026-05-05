@@ -1,9 +1,9 @@
 import { task } from "@trigger.dev/sdk";
-import { eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 
 import { getDb } from "@/lib/db/client";
-import { productCandidates, runs } from "@/lib/db/schema";
+import { productCandidates, productIntents, runs } from "@/lib/db/schema";
 import { emitWorkflowEvent } from "@/lib/observability/events";
 import { withSpan } from "@/lib/observability/otel";
 import { commerceProvider } from "@/lib/providers/commerce";
@@ -46,16 +46,29 @@ export const buildBasket = task({
         const run = db.select().from(runs).where(eq(runs.id, input.runId)).all()[0];
         if (!run) throw new Error(`buildBasket: run ${input.runId} not found`);
 
-        // Pull all candidates flagged isSelected for this run (selected by matchProducts).
-        const allCandidates = db
-          .select({
-            id: productCandidates.id,
-            intentId: productCandidates.intentId,
-            isSelected: productCandidates.isSelected,
-          })
-          .from(productCandidates)
+        const intentRows = db
+          .select({ id: productIntents.id })
+          .from(productIntents)
+          .where(eq(productIntents.runId, input.runId))
           .all();
-        const selected = allCandidates.filter((c) => c.isSelected);
+        const intentIds = intentRows.map((r) => r.id);
+
+        const selected =
+          intentIds.length === 0
+            ? []
+            : db
+                .select({
+                  id: productCandidates.id,
+                  intentId: productCandidates.intentId,
+                })
+                .from(productCandidates)
+                .where(
+                  and(
+                    inArray(productCandidates.intentId, intentIds),
+                    eq(productCandidates.isSelected, true),
+                  ),
+                )
+                .all();
 
         const basket = await commerceProvider.createBasket({
           userId: run.userId,
