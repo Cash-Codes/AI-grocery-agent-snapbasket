@@ -2,9 +2,9 @@ import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 
-import Database from "better-sqlite3";
-import { drizzle } from "drizzle-orm/better-sqlite3";
-import { migrate } from "drizzle-orm/better-sqlite3/migrator";
+import { createClient, type Client } from "@libsql/client";
+import { drizzle } from "drizzle-orm/libsql";
+import { migrate } from "drizzle-orm/libsql/migrator";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
 import * as schema from "@/lib/db/schema";
@@ -19,18 +19,16 @@ vi.mock("@trigger.dev/sdk", () => ({
 let tempDir: string;
 let dbPath: string;
 let imagePath: string;
-let sqlite: Database.Database;
+let client: Client;
 
-beforeAll(() => {
+beforeAll(async () => {
   tempDir = mkdtempSync(path.join(tmpdir(), "snapbasket-runs-"));
   dbPath = path.join(tempDir, "test.db");
   imagePath = path.join(tempDir, "test.png");
 
-  sqlite = new Database(dbPath);
-  sqlite.pragma("journal_mode = WAL");
-  sqlite.pragma("foreign_keys = ON");
-  const db = drizzle(sqlite, { schema });
-  migrate(db, { migrationsFolder: path.resolve(process.cwd(), "drizzle") });
+  client = createClient({ url: `file:${dbPath}` });
+  const db = drizzle(client, { schema });
+  await migrate(db, { migrationsFolder: path.resolve(process.cwd(), "drizzle") });
 
   // Stub a tiny png on disk so the route can read its bytes.
   writeFileSync(imagePath, new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]));
@@ -38,7 +36,8 @@ beforeAll(() => {
   process.env.DATABASE_URL = dbPath;
 
   // Seed an image row pointing at the stub file.
-  db.insert(schema.images)
+  await db
+    .insert(schema.images)
     .values({
       id: "img_test_runs",
       sha256: "test_sha_runs",
@@ -50,7 +49,7 @@ beforeAll(() => {
 });
 
 afterAll(() => {
-  sqlite.close();
+  client.close();
   rmSync(tempDir, { recursive: true, force: true });
   delete process.env.DATABASE_URL;
 });
@@ -98,7 +97,9 @@ describe("POST /api/runs", () => {
     const { getDb } = await import("@/lib/db/client");
     const { eq } = await import("drizzle-orm");
     const db = getDb();
-    const runRow = db.select().from(schema.runs).where(eq(schema.runs.id, body.runId)).all()[0];
+    const runRow = (
+      await db.select().from(schema.runs).where(eq(schema.runs.id, body.runId)).all()
+    )[0];
     expect(runRow?.triggerRunId).toBe("fake_trigger_run_runs_test");
   });
 
@@ -132,7 +133,8 @@ describe("GET /api/runs/[runId]", () => {
     const { getDb } = await import("@/lib/db/client");
     const db = getDb();
 
-    db.insert(schema.runs)
+    await db
+      .insert(schema.runs)
       .values({
         id: "run_for_get_test",
         imageId: "img_test_runs",
@@ -142,7 +144,8 @@ describe("GET /api/runs/[runId]", () => {
       })
       .run();
 
-    db.insert(schema.baskets)
+    await db
+      .insert(schema.baskets)
       .values({
         id: "b_for_get_test",
         runId: "run_for_get_test",
@@ -153,7 +156,8 @@ describe("GET /api/runs/[runId]", () => {
       })
       .run();
 
-    db.insert(schema.checkoutSessions)
+    await db
+      .insert(schema.checkoutSessions)
       .values({
         id: "cs_for_get_test",
         basketId: "b_for_get_test",
@@ -182,7 +186,8 @@ describe("GET /api/runs/[runId]", () => {
     const { getDb } = await import("@/lib/db/client");
     const db = getDb();
 
-    db.insert(schema.runs)
+    await db
+      .insert(schema.runs)
       .values({
         id: "run_no_checkout",
         imageId: "img_test_runs",

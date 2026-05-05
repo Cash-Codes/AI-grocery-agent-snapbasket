@@ -2,37 +2,36 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 
-import Database from "better-sqlite3";
+import { createClient, type Client } from "@libsql/client";
 import { eq } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/better-sqlite3";
-import { migrate } from "drizzle-orm/better-sqlite3/migrator";
+import { drizzle } from "drizzle-orm/libsql";
+import { migrate } from "drizzle-orm/libsql/migrator";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import * as schema from "@/lib/db/schema";
 
 let tempDir: string;
-let sqlite: Database.Database;
+let client: Client;
 let db: ReturnType<typeof drizzle<typeof schema>>;
 
-beforeAll(() => {
+beforeAll(async () => {
   tempDir = mkdtempSync(path.join(tmpdir(), "snapbasket-test-"));
   const dbPath = path.join(tempDir, "test.db");
-  sqlite = new Database(dbPath);
-  sqlite.pragma("journal_mode = WAL");
-  sqlite.pragma("foreign_keys = ON");
-  db = drizzle(sqlite, { schema });
-  migrate(db, { migrationsFolder: path.resolve(process.cwd(), "drizzle") });
+  client = createClient({ url: `file:${dbPath}` });
+  db = drizzle(client, { schema });
+  await migrate(db, { migrationsFolder: path.resolve(process.cwd(), "drizzle") });
 });
 
 afterAll(() => {
-  sqlite.close();
+  client.close();
   rmSync(tempDir, { recursive: true, force: true });
 });
 
 describe("db schema smoke", () => {
-  it("round-trips through every table category", () => {
+  it("round-trips through every table category", async () => {
     const imageId = "img_smoke";
-    db.insert(schema.images)
+    await db
+      .insert(schema.images)
       .values({
         id: imageId,
         sha256: "abc123",
@@ -43,7 +42,8 @@ describe("db schema smoke", () => {
       .run();
 
     const runId = "run_smoke";
-    db.insert(schema.runs)
+    await db
+      .insert(schema.runs)
       .values({
         id: runId,
         imageId,
@@ -53,7 +53,8 @@ describe("db schema smoke", () => {
       .run();
 
     const intentId = "intent_smoke";
-    db.insert(schema.productIntents)
+    await db
+      .insert(schema.productIntents)
       .values({
         id: intentId,
         runId,
@@ -69,7 +70,8 @@ describe("db schema smoke", () => {
       .run();
 
     const candidateId = "cand_smoke";
-    db.insert(schema.productCandidates)
+    await db
+      .insert(schema.productCandidates)
       .values({
         id: candidateId,
         intentId,
@@ -84,7 +86,8 @@ describe("db schema smoke", () => {
       .run();
 
     const basketId = "basket_smoke";
-    db.insert(schema.baskets)
+    await db
+      .insert(schema.baskets)
       .values({
         id: basketId,
         runId,
@@ -95,7 +98,8 @@ describe("db schema smoke", () => {
       })
       .run();
 
-    db.insert(schema.basketItems)
+    await db
+      .insert(schema.basketItems)
       .values({
         id: "bi_smoke",
         basketId,
@@ -105,7 +109,8 @@ describe("db schema smoke", () => {
       })
       .run();
 
-    db.insert(schema.policyResults)
+    await db
+      .insert(schema.policyResults)
       .values({
         id: "pol_smoke",
         basketId,
@@ -116,7 +121,8 @@ describe("db schema smoke", () => {
       })
       .run();
 
-    db.insert(schema.workflowEvents)
+    await db
+      .insert(schema.workflowEvents)
       .values({
         id: "evt_smoke",
         runId,
@@ -127,7 +133,8 @@ describe("db schema smoke", () => {
       })
       .run();
 
-    db.insert(schema.userConsents)
+    await db
+      .insert(schema.userConsents)
       .values({
         id: "con_smoke",
         runId,
@@ -138,23 +145,31 @@ describe("db schema smoke", () => {
       .run();
 
     // Read each row back to confirm round-trip.
-    const [image] = db.select().from(schema.images).where(eq(schema.images.id, imageId)).all();
+    const [image] = await db
+      .select()
+      .from(schema.images)
+      .where(eq(schema.images.id, imageId))
+      .all();
     expect(image?.sha256).toBe("abc123");
 
-    const [run] = db.select().from(schema.runs).where(eq(schema.runs.id, runId)).all();
+    const [run] = await db.select().from(schema.runs).where(eq(schema.runs.id, runId)).all();
     expect(run?.status).toBe("PENDING");
 
-    const [basket] = db.select().from(schema.baskets).where(eq(schema.baskets.id, basketId)).all();
+    const [basket] = await db
+      .select()
+      .from(schema.baskets)
+      .where(eq(schema.baskets.id, basketId))
+      .all();
     expect(basket?.itemCount).toBe(1);
 
-    const [policy] = db
+    const [policy] = await db
       .select()
       .from(schema.policyResults)
       .where(eq(schema.policyResults.basketId, basketId))
       .all();
     expect(policy?.ok).toBe(true);
 
-    const events = db
+    const events = await db
       .select()
       .from(schema.workflowEvents)
       .where(eq(schema.workflowEvents.runId, runId))
@@ -163,9 +178,10 @@ describe("db schema smoke", () => {
     expect(events[0]?.status).toBe("succeeded");
   });
 
-  it("enforces idempotency unique on baskets", () => {
+  it("enforces idempotency unique on baskets", async () => {
     const runId = "run_idem";
-    db.insert(schema.images)
+    await db
+      .insert(schema.images)
       .values({
         id: "img_idem",
         sha256: "idem-sha",
@@ -174,10 +190,12 @@ describe("db schema smoke", () => {
         storagePath: "/tmp/idem.png",
       })
       .run();
-    db.insert(schema.runs)
+    await db
+      .insert(schema.runs)
       .values({ id: runId, imageId: "img_idem", userId: "u", correlationId: "c" })
       .run();
-    db.insert(schema.baskets)
+    await db
+      .insert(schema.baskets)
       .values({
         id: "b1",
         runId,
@@ -188,8 +206,11 @@ describe("db schema smoke", () => {
       })
       .run();
 
-    expect(() =>
-      db
+    // libsql wraps the underlying SQLITE_CONSTRAINT error in a generic "Failed query" message;
+    // the original UNIQUE violation surfaces on `.cause.message`.
+    let captured: unknown;
+    try {
+      await db
         .insert(schema.baskets)
         .values({
           id: "b2",
@@ -199,7 +220,12 @@ describe("db schema smoke", () => {
           itemCount: 0,
           idempotencyKey: "shared-key",
         })
-        .run(),
-    ).toThrowError(/UNIQUE/i);
+        .run();
+    } catch (err) {
+      captured = err;
+    }
+    expect(captured).toBeInstanceOf(Error);
+    const cause = (captured as Error & { cause?: Error }).cause;
+    expect(cause?.message ?? "").toMatch(/UNIQUE/i);
   });
 });

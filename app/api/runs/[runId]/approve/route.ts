@@ -5,7 +5,7 @@ import { eq } from "drizzle-orm";
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-import { getDb } from "@/lib/db/client";
+import { ensureMigrated, getDb } from "@/lib/db/client";
 import { runs, userConsents } from "@/lib/db/schema";
 import { logger } from "@/lib/observability/logger";
 import { badRequest, conflict, internalError, notFound, parseJsonBody } from "@/lib/server/api";
@@ -35,8 +35,9 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
   const parsed = parseJsonBody(ApproveSchema, body);
   if (!parsed.ok) return parsed.res;
 
+  await ensureMigrated();
   const db = getDb();
-  const run = db.select().from(runs).where(eq(runs.id, runId)).all()[0];
+  const run = (await db.select().from(runs).where(eq(runs.id, runId)).all())[0];
   if (!run) return notFound(`Run ${runId} not found`);
   if (run.status !== "AWAITING_APPROVAL") {
     return conflict(`Run ${runId} is not awaiting approval (current status: ${run.status})`);
@@ -54,7 +55,8 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
 
   // Persist the consent BEFORE completing the token, so the audit trail exists
   // even if the SDK call fails after partial work.
-  db.insert(userConsents)
+  await db
+    .insert(userConsents)
     .values({
       id: `con_${randomUUID()}`,
       runId,

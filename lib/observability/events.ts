@@ -18,9 +18,10 @@ export interface EmitWorkflowEventInput {
   error?: { message: string; stack?: string };
 }
 
-export function emitWorkflowEvent(input: EmitWorkflowEventInput): void {
+export async function emitWorkflowEvent(input: EmitWorkflowEventInput): Promise<void> {
   const db = getDb();
-  db.insert(workflowEvents)
+  await db
+    .insert(workflowEvents)
     .values({
       id: `evt_${randomUUID()}`,
       runId: input.runId,
@@ -34,7 +35,7 @@ export function emitWorkflowEvent(input: EmitWorkflowEventInput): void {
     .run();
 }
 
-export function readWorkflowEvents(runId: string) {
+export async function readWorkflowEvents(runId: string) {
   const db = getDb();
   return db.select().from(workflowEvents).where(eq(workflowEvents.runId, runId)).all();
 }

@@ -2,7 +2,7 @@ import { task, wait } from "@trigger.dev/sdk";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 
-import { getDb } from "@/lib/db/client";
+import { ensureMigrated, getDb } from "@/lib/db/client";
 import { runs } from "@/lib/db/schema";
 import { emitWorkflowEvent } from "@/lib/observability/events";
 import { logger } from "@/lib/observability/logger";
@@ -44,7 +44,7 @@ export const requireHumanApproval = task({
         basketId: input.basketId,
       },
       async () => {
-        emitWorkflowEvent({
+        await emitWorkflowEvent({
           runId: input.runId,
           step: "requireHumanApproval",
           status: "started",
@@ -58,8 +58,10 @@ export const requireHumanApproval = task({
         });
 
         // Persist the token id on the run row so the API route can look it up by runId.
+        await ensureMigrated();
         const db = getDb();
-        db.update(runs)
+        await db
+          .update(runs)
           .set({
             approvalTokenId: tokenHandle.id,
             status: "AWAITING_APPROVAL",
@@ -79,8 +81,8 @@ export const requireHumanApproval = task({
 
         if (!result.ok) {
           // Timeout
-          db.update(runs).set({ status: "TIMED_OUT" }).where(eq(runs.id, input.runId)).run();
-          emitWorkflowEvent({
+          await db.update(runs).set({ status: "TIMED_OUT" }).where(eq(runs.id, input.runId)).run();
+          await emitWorkflowEvent({
             runId: input.runId,
             step: "requireHumanApproval",
             status: "succeeded",
@@ -93,9 +95,9 @@ export const requireHumanApproval = task({
 
         const decision = ApprovalDecisionSchema.parse(result.output);
         const newStatus = decision.approved ? "APPROVED" : "REJECTED";
-        db.update(runs).set({ status: newStatus }).where(eq(runs.id, input.runId)).run();
+        await db.update(runs).set({ status: newStatus }).where(eq(runs.id, input.runId)).run();
 
-        emitWorkflowEvent({
+        await emitWorkflowEvent({
           runId: input.runId,
           step: "requireHumanApproval",
           status: "succeeded",

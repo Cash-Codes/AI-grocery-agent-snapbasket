@@ -4,7 +4,7 @@ import { task } from "@trigger.dev/sdk";
 import { eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 
-import { getDb } from "@/lib/db/client";
+import { ensureMigrated, getDb } from "@/lib/db/client";
 import { basketItems, baskets, policyResults, productCandidates } from "@/lib/db/schema";
 import { emitWorkflowEvent } from "@/lib/observability/events";
 import { withSpan } from "@/lib/observability/otel";
@@ -38,7 +38,7 @@ export const validateBasketPolicy = task({
         attempt,
       },
       async () => {
-        emitWorkflowEvent({
+        await emitWorkflowEvent({
           runId: input.runId,
           step: "validateBasketPolicy",
           status: "started",
@@ -46,11 +46,14 @@ export const validateBasketPolicy = task({
           correlationId: input.correlationId,
         });
 
+        await ensureMigrated();
         const db = getDb();
-        const basketRow = db.select().from(baskets).where(eq(baskets.id, input.basketId)).all()[0];
+        const basketRow = (
+          await db.select().from(baskets).where(eq(baskets.id, input.basketId)).all()
+        )[0];
         if (!basketRow) throw new Error(`validateBasketPolicy: basket ${input.basketId} not found`);
 
-        const itemRows = db
+        const itemRows = await db
           .select()
           .from(basketItems)
           .where(eq(basketItems.basketId, input.basketId))
@@ -58,7 +61,7 @@ export const validateBasketPolicy = task({
         const candidateIds = itemRows.map((it) => it.candidateId);
         const candidateRows =
           candidateIds.length > 0
-            ? db
+            ? await db
                 .select()
                 .from(productCandidates)
                 .where(inArray(productCandidates.id, candidateIds))
@@ -105,7 +108,8 @@ export const validateBasketPolicy = task({
         const result = validateBasket({ basket, candidates: candidateMap, profile });
 
         const policyResultId = `pol_${randomUUID()}`;
-        db.insert(policyResults)
+        await db
+          .insert(policyResults)
           .values({
             id: policyResultId,
             basketId: basketRow.id,
@@ -123,7 +127,7 @@ export const validateBasketPolicy = task({
           flagCount: result.flags.length,
         });
 
-        emitWorkflowEvent({
+        await emitWorkflowEvent({
           runId: input.runId,
           step: "validateBasketPolicy",
           status: "succeeded",

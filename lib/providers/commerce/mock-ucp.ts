@@ -108,7 +108,7 @@ export class MockUcpCommerceProvider implements CommerceProvider {
     const db = getDb();
 
     // Look up existing basket by the unique idempotency key.
-    const existing = db
+    const existing = await db
       .select()
       .from(baskets)
       .where(eq(baskets.idempotencyKey, input.idempotencyKey))
@@ -118,8 +118,12 @@ export class MockUcpCommerceProvider implements CommerceProvider {
     }
 
     // resolve each candidate so we can compute totals
-    const candidates = input.items.map((draft) => {
-      const rows = db
+    const candidates: {
+      draft: (typeof input.items)[number];
+      candidate: typeof productCandidates.$inferSelect;
+    }[] = [];
+    for (const draft of input.items) {
+      const rows = await db
         .select()
         .from(productCandidates)
         .where(eq(productCandidates.id, draft.candidateId))
@@ -130,8 +134,8 @@ export class MockUcpCommerceProvider implements CommerceProvider {
           `MockUcpCommerceProvider.createBasket: candidate ${draft.candidateId} not found`,
         );
       }
-      return { draft, candidate };
-    });
+      candidates.push({ draft, candidate });
+    }
 
     const totalPence = candidates.reduce(
       (sum, { draft, candidate }) => sum + draft.quantity * candidate.pricePence,
@@ -142,7 +146,8 @@ export class MockUcpCommerceProvider implements CommerceProvider {
     const basketId = `basket_${randomUUID()}`;
     const providerBasketId = `prov_basket_${randomUUID()}`;
 
-    db.insert(baskets)
+    await db
+      .insert(baskets)
       .values({
         id: basketId,
         runId: input.runId,
@@ -154,7 +159,8 @@ export class MockUcpCommerceProvider implements CommerceProvider {
       .run();
 
     for (const { draft, candidate } of candidates) {
-      db.insert(basketItems)
+      await db
+        .insert(basketItems)
         .values({
           id: `bi_${randomUUID()}`,
           basketId,
@@ -176,7 +182,7 @@ export class MockUcpCommerceProvider implements CommerceProvider {
     const db = getDb();
 
     // Idempotency at the checkout layer, same idempotencyKey + same basket - same session.
-    const existing = db
+    const existing = await db
       .select()
       .from(checkoutSessions)
       .where(eq(checkoutSessions.basketId, input.basketId))
@@ -191,7 +197,8 @@ export class MockUcpCommerceProvider implements CommerceProvider {
     const id = `cs_${randomUUID()}`;
     const providerSessionId = input.idempotencyKey; // reuse the key as the provider's id for the mock
 
-    db.insert(checkoutSessions)
+    await db
+      .insert(checkoutSessions)
       .values({
         id,
         basketId: input.basketId,
@@ -200,13 +207,21 @@ export class MockUcpCommerceProvider implements CommerceProvider {
       })
       .run();
 
-    const inserted = db.select().from(checkoutSessions).where(eq(checkoutSessions.id, id)).all();
+    const inserted = await db
+      .select()
+      .from(checkoutSessions)
+      .where(eq(checkoutSessions.id, id))
+      .all();
     return this.toCheckoutSession(inserted[0]!);
   }
 
   async getOrderStatus(sessionId: string): Promise<OrderStatus> {
     const db = getDb();
-    const rows = db.select().from(checkoutSessions).where(eq(checkoutSessions.id, sessionId)).all();
+    const rows = await db
+      .select()
+      .from(checkoutSessions)
+      .where(eq(checkoutSessions.id, sessionId))
+      .all();
     const session = rows[0];
     if (!session) {
       throw new Error(`MockUcpCommerceProvider.getOrderStatus: session ${sessionId} not found`);
@@ -221,14 +236,18 @@ export class MockUcpCommerceProvider implements CommerceProvider {
 
   // private helpers
 
-  private hydrateBasket(basketId: string): Basket {
+  private async hydrateBasket(basketId: string): Promise<Basket> {
     const db = getDb();
-    const basketRows = db.select().from(baskets).where(eq(baskets.id, basketId)).all();
+    const basketRows = await db.select().from(baskets).where(eq(baskets.id, basketId)).all();
     const row = basketRows[0];
     if (!row) {
       throw new Error(`MockUcpCommerceProvider.hydrateBasket: basket ${basketId} not found`);
     }
-    const itemRows = db.select().from(basketItems).where(eq(basketItems.basketId, basketId)).all();
+    const itemRows = await db
+      .select()
+      .from(basketItems)
+      .where(eq(basketItems.basketId, basketId))
+      .all();
     return {
       id: row.id,
       runId: row.runId,

@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import { eq } from "drizzle-orm";
 import { type NextRequest, NextResponse } from "next/server";
 
-import { getDb } from "@/lib/db/client";
+import { ensureMigrated, getDb } from "@/lib/db/client";
 import { images } from "@/lib/db/schema";
 import { logger } from "@/lib/observability/logger";
 import { internalError, notFound } from "@/lib/server/api";
@@ -17,8 +17,9 @@ interface RouteContext {
 export async function GET(_request: NextRequest, { params }: RouteContext) {
   const { imageId } = await params;
 
+  await ensureMigrated();
   const db = getDb();
-  const row = db.select().from(images).where(eq(images.id, imageId)).all()[0];
+  const row = (await db.select().from(images).where(eq(images.id, imageId)).all())[0];
   if (!row) return notFound(`Image ${imageId} not found`);
 
   let bytes: Buffer;

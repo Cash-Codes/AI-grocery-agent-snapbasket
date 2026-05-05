@@ -6,7 +6,7 @@ import path from "node:path";
 
 import { eq } from "drizzle-orm";
 
-import { getDb } from "@/lib/db/client";
+import { ensureMigrated, getDb } from "@/lib/db/client";
 import { images } from "@/lib/db/schema";
 
 const ALLOWED_MIME = new Set(["image/png", "image/jpeg", "image/webp"]);
@@ -43,7 +43,10 @@ function extensionFor(mime: string): string {
   return "bin";
 }
 
-export function ingestImage(input: { bytes: Uint8Array; mime: string }): UploadResult {
+export async function ingestImage(input: {
+  bytes: Uint8Array;
+  mime: string;
+}): Promise<UploadResult> {
   if (input.bytes.byteLength === 0) {
     throw new UploadError("EMPTY", "Empty file");
   }
@@ -55,10 +58,11 @@ export function ingestImage(input: { bytes: Uint8Array; mime: string }): UploadR
   }
 
   const sha256 = sha256Hex(input.bytes);
+  await ensureMigrated();
   const db = getDb();
 
   // Dedup: same content hash - same imageId.
-  const existing = db.select().from(images).where(eq(images.sha256, sha256)).all()[0];
+  const existing = (await db.select().from(images).where(eq(images.sha256, sha256)).all())[0];
   if (existing) {
     return {
       imageId: existing.id,
@@ -77,7 +81,8 @@ export function ingestImage(input: { bytes: Uint8Array; mime: string }): UploadR
   writeFileSync(storagePath, input.bytes);
 
   const imageId = `img_${randomUUID()}`;
-  db.insert(images)
+  await db
+    .insert(images)
     .values({
       id: imageId,
       sha256,
