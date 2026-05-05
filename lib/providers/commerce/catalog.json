@@ -42,7 +42,7 @@
     "pricePence": 320,
     "unit": "pack",
     "thumbnailUrl": null,
-    "searchTokens": ["cheese", "cheddar", "dairy"]
+    "searchTokens": ["cheddar", "mature cheddar", "cheese", "dairy"]
   },
   {
     "providerProductId": "prov_dairy_006",
@@ -52,6 +52,93 @@
     "unit": "pack",
     "thumbnailUrl": null,
     "searchTokens": ["butter", "lurpak", "dairy"]
+  },
+  {
+    "providerProductId": "prov_dairy_007",
+    "name": "Sainsbury's Cottage Cheese 300g",
+    "category": "dairy",
+    "pricePence": 175,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["cottage cheese", "cheese", "dairy"]
+  },
+  {
+    "providerProductId": "prov_dairy_008",
+    "name": "Galbani Light Mozzarella 125g",
+    "category": "dairy",
+    "pricePence": 145,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": [
+      "light mozzarella",
+      "fat free mozzarella",
+      "low fat mozzarella",
+      "mozzarella",
+      "cheese"
+    ]
+  },
+  {
+    "providerProductId": "prov_dairy_009",
+    "name": "Sainsbury's British Mozzarella 250g",
+    "category": "dairy",
+    "pricePence": 175,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["mozzarella", "cheese", "dairy"]
+  },
+  {
+    "providerProductId": "prov_dairy_010",
+    "name": "Sainsbury's Greek Style Feta 200g",
+    "category": "dairy",
+    "pricePence": 195,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["feta", "feta cheese", "cheese"]
+  },
+  {
+    "providerProductId": "prov_dairy_011",
+    "name": "Sainsbury's Halloumi 250g",
+    "category": "dairy",
+    "pricePence": 285,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["halloumi", "cheese"]
+  },
+  {
+    "providerProductId": "prov_dairy_012",
+    "name": "Philadelphia Cream Cheese 180g",
+    "category": "dairy",
+    "pricePence": 195,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["cream cheese", "philadelphia", "cheese", "spread"]
+  },
+  {
+    "providerProductId": "prov_dairy_013",
+    "name": "Sainsbury's Sour Cream 300ml",
+    "category": "dairy",
+    "pricePence": 145,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["sour cream", "cream", "dairy"]
+  },
+  {
+    "providerProductId": "prov_dairy_014",
+    "name": "Sainsbury's Double Cream 300ml",
+    "category": "dairy",
+    "pricePence": 165,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["double cream", "heavy cream", "cream", "dairy"]
+  },
+  {
+    "providerProductId": "prov_dairy_015",
+    "name": "Sainsbury's Single Cream 300ml",
+    "category": "dairy",
+    "pricePence": 145,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["single cream", "cream", "dairy"]
   },
   {
     "providerProductId": "prov_produce_001",
@@ -69,7 +156,7 @@
     "pricePence": 180,
     "unit": "pack",
     "thumbnailUrl": null,
-    "searchTokens": ["tomato", "tomatoes", "cherry tomato", "vegetables"]
+    "searchTokens": ["cherry tomato", "tomato", "tomatoes", "vegetables"]
   },
   {
     "providerProductId": "prov_produce_003",
@@ -78,7 +165,7 @@
     "pricePence": 220,
     "unit": "pack",
     "thumbnailUrl": null,
-    "searchTokens": ["tomato", "tomatoes", "vine tomato", "vegetables"]
+    "searchTokens": ["vine tomato", "tomato", "tomatoes", "vegetables"]
   },
   {
     "providerProductId": "prov_produce_004",
@@ -96,7 +183,7 @@
     "pricePence": 95,
     "unit": "kg",
     "thumbnailUrl": null,
-    "searchTokens": ["onion", "onions", "vegetables"]
+    "searchTokens": ["onion", "onions", "brown onion", "vegetables"]
   },
   {
     "providerProductId": "prov_produce_006",
@@ -114,7 +201,7 @@
     "pricePence": 175,
     "unit": "pack",
     "thumbnailUrl": null,
-    "searchTokens": ["potato", "potatoes", "vegetables"]
+    "searchTokens": ["potato", "potatoes", "maris piper", "vegetables"]
   },
   {
     "providerProductId": "prov_produce_008",
@@ -123,7 +210,124 @@
     "pricePence": 100,
     "unit": "item",
     "thumbnailUrl": null,
-    "searchTokens": ["lettuce", "salad", "vegetables"]
+    "searchTokens": ["lettuce", "iceberg lettuce", "salad", "vegetables"]
+  },
+  {
+    "providerProductId": "prov_produce_009",
+    "name": "Green Beans 200g",
+    "category": "produce",
+    "pricePence": 180,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["green beans", "beans", "vegetables"]
+  },
+  {
+    "providerProductId": "prov_produce_010",
+    "name": "Red Bell Pepper",
+    "category": "produce",
+    "pricePence": 70,
+    "unit": "item",
+    "thumbnailUrl": null,
+    "searchTokens": ["red pepper", "red bell pepper", "bell pepper", "pepper", "vegetables"]
+  },
+  {
+    "providerProductId": "prov_produce_011",
+    "name": "Green Bell Pepper",
+    "category": "produce",
+    "pricePence": 70,
+    "unit": "item",
+    "thumbnailUrl": null,
+    "searchTokens": ["green pepper", "green bell pepper", "bell pepper", "pepper", "vegetables"]
+  },
+  {
+    "providerProductId": "prov_produce_012",
+    "name": "Closed Cup Mushrooms 250g",
+    "category": "produce",
+    "pricePence": 110,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["mushroom", "mushrooms", "closed cup mushrooms", "vegetables"]
+  },
+  {
+    "providerProductId": "prov_produce_013",
+    "name": "Cucumber, whole",
+    "category": "produce",
+    "pricePence": 75,
+    "unit": "item",
+    "thumbnailUrl": null,
+    "searchTokens": ["cucumber", "vegetables"]
+  },
+  {
+    "providerProductId": "prov_produce_014",
+    "name": "Tenderstem Broccoli 200g",
+    "category": "produce",
+    "pricePence": 195,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["broccoli", "tenderstem broccoli", "vegetables"]
+  },
+  {
+    "providerProductId": "prov_produce_015",
+    "name": "Baby Spinach 240g",
+    "category": "produce",
+    "pricePence": 170,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["spinach", "baby spinach", "salad", "vegetables"]
+  },
+  {
+    "providerProductId": "prov_produce_016",
+    "name": "Garlic Bulb",
+    "category": "produce",
+    "pricePence": 45,
+    "unit": "item",
+    "thumbnailUrl": null,
+    "searchTokens": ["garlic", "garlic bulb", "vegetables"]
+  },
+  {
+    "providerProductId": "prov_produce_017",
+    "name": "Avocado",
+    "category": "produce",
+    "pricePence": 90,
+    "unit": "item",
+    "thumbnailUrl": null,
+    "searchTokens": ["avocado", "fruit"]
+  },
+  {
+    "providerProductId": "prov_produce_018",
+    "name": "Lemons (4-pack)",
+    "category": "produce",
+    "pricePence": 100,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["lemon", "lemons", "fruit"]
+  },
+  {
+    "providerProductId": "prov_produce_019",
+    "name": "Limes (5-pack)",
+    "category": "produce",
+    "pricePence": 80,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["lime", "limes", "fruit"]
+  },
+  {
+    "providerProductId": "prov_produce_020",
+    "name": "Strawberries 400g",
+    "category": "produce",
+    "pricePence": 250,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["strawberry", "strawberries", "fruit"]
+  },
+  {
+    "providerProductId": "prov_produce_021",
+    "name": "Blueberries 150g",
+    "category": "produce",
+    "pricePence": 200,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["blueberry", "blueberries", "fruit"]
   },
   {
     "providerProductId": "prov_pantry_001",
@@ -132,7 +336,7 @@
     "pricePence": 95,
     "unit": "pack",
     "thumbnailUrl": null,
-    "searchTokens": ["pasta", "penne"]
+    "searchTokens": ["pasta", "penne", "penne pasta"]
   },
   {
     "providerProductId": "prov_pantry_002",
@@ -150,7 +354,7 @@
     "pricePence": 350,
     "unit": "pack",
     "thumbnailUrl": null,
-    "searchTokens": ["rice", "basmati", "tilda"]
+    "searchTokens": ["rice", "basmati rice", "tilda"]
   },
   {
     "providerProductId": "prov_pantry_004",
@@ -168,7 +372,7 @@
     "pricePence": 220,
     "unit": "pack",
     "thumbnailUrl": null,
-    "searchTokens": ["cereal", "oats", "porridge", "quaker"]
+    "searchTokens": ["oats", "porridge oats", "porridge", "quaker"]
   },
   {
     "providerProductId": "prov_pantry_006",
@@ -177,7 +381,7 @@
     "pricePence": 110,
     "unit": "pack",
     "thumbnailUrl": null,
-    "searchTokens": ["flour", "baking"]
+    "searchTokens": ["flour", "plain flour", "baking"]
   },
   {
     "providerProductId": "prov_pantry_007",
@@ -186,7 +390,7 @@
     "pricePence": 425,
     "unit": "bottle",
     "thumbnailUrl": null,
-    "searchTokens": ["oil", "olive oil"]
+    "searchTokens": ["olive oil", "oil", "filippo berio"]
   },
   {
     "providerProductId": "prov_pantry_008",
@@ -195,7 +399,151 @@
     "pricePence": 110,
     "unit": "tin",
     "thumbnailUrl": null,
-    "searchTokens": ["beans", "baked beans", "heinz"]
+    "searchTokens": ["baked beans", "beans", "heinz"]
+  },
+  {
+    "providerProductId": "prov_pantry_009",
+    "name": "Schwartz Onion Powder 39g",
+    "category": "pantry",
+    "pricePence": 145,
+    "unit": "jar",
+    "thumbnailUrl": null,
+    "searchTokens": ["onion powder", "spice", "seasoning", "schwartz"]
+  },
+  {
+    "providerProductId": "prov_pantry_010",
+    "name": "Schwartz Garlic Powder 50g",
+    "category": "pantry",
+    "pricePence": 145,
+    "unit": "jar",
+    "thumbnailUrl": null,
+    "searchTokens": ["garlic powder", "spice", "seasoning", "schwartz"]
+  },
+  {
+    "providerProductId": "prov_pantry_011",
+    "name": "Schwartz Smoked Paprika 38g",
+    "category": "pantry",
+    "pricePence": 175,
+    "unit": "jar",
+    "thumbnailUrl": null,
+    "searchTokens": ["smoked paprika", "paprika", "spice", "seasoning", "schwartz"]
+  },
+  {
+    "providerProductId": "prov_pantry_012",
+    "name": "Schwartz Dried Oregano 11g",
+    "category": "pantry",
+    "pricePence": 130,
+    "unit": "jar",
+    "thumbnailUrl": null,
+    "searchTokens": ["oregano", "dried oregano", "herb", "seasoning"]
+  },
+  {
+    "providerProductId": "prov_pantry_013",
+    "name": "Hellmann's Light Mayo 430ml",
+    "category": "pantry",
+    "pricePence": 245,
+    "unit": "jar",
+    "thumbnailUrl": null,
+    "searchTokens": ["light mayo", "light mayonnaise", "mayo", "mayonnaise", "hellmann"]
+  },
+  {
+    "providerProductId": "prov_pantry_014",
+    "name": "Hellmann's Real Mayonnaise 430ml",
+    "category": "pantry",
+    "pricePence": 295,
+    "unit": "jar",
+    "thumbnailUrl": null,
+    "searchTokens": ["mayonnaise", "mayo", "real mayonnaise", "hellmann"]
+  },
+  {
+    "providerProductId": "prov_pantry_015",
+    "name": "Heinz Sugar Free BBQ Sauce 480g",
+    "category": "pantry",
+    "pricePence": 235,
+    "unit": "bottle",
+    "thumbnailUrl": null,
+    "searchTokens": ["sugar free bbq sauce", "bbq sauce", "barbecue sauce", "sauce", "heinz"]
+  },
+  {
+    "providerProductId": "prov_pantry_016",
+    "name": "French's Yellow Mustard 226g",
+    "category": "pantry",
+    "pricePence": 195,
+    "unit": "bottle",
+    "thumbnailUrl": null,
+    "searchTokens": ["yellow mustard", "mustard", "frenchs"]
+  },
+  {
+    "providerProductId": "prov_pantry_017",
+    "name": "Rowse Pure Honey 340g",
+    "category": "pantry",
+    "pricePence": 295,
+    "unit": "jar",
+    "thumbnailUrl": null,
+    "searchTokens": ["honey", "pure honey", "rowse"]
+  },
+  {
+    "providerProductId": "prov_pantry_018",
+    "name": "Cirio Tomato Paste 200g",
+    "category": "pantry",
+    "pricePence": 110,
+    "unit": "tube",
+    "thumbnailUrl": null,
+    "searchTokens": ["tomato paste", "tomato puree", "passata", "cirio"]
+  },
+  {
+    "providerProductId": "prov_pantry_019",
+    "name": "Lee Kum Kee Oyster Sauce 255g",
+    "category": "pantry",
+    "pricePence": 245,
+    "unit": "bottle",
+    "thumbnailUrl": null,
+    "searchTokens": ["oyster sauce", "asian sauce", "lee kum kee"]
+  },
+  {
+    "providerProductId": "prov_pantry_020",
+    "name": "Kikkoman Soy Sauce 250ml",
+    "category": "pantry",
+    "pricePence": 215,
+    "unit": "bottle",
+    "thumbnailUrl": null,
+    "searchTokens": ["soy sauce", "kikkoman", "asian sauce"]
+  },
+  {
+    "providerProductId": "prov_pantry_021",
+    "name": "Sun-Pat Smooth Peanut Butter 400g",
+    "category": "pantry",
+    "pricePence": 295,
+    "unit": "jar",
+    "thumbnailUrl": null,
+    "searchTokens": ["peanut butter", "smooth peanut butter", "sun-pat", "spread"]
+  },
+  {
+    "providerProductId": "prov_pantry_022",
+    "name": "Sainsbury's Sea Salt 500g",
+    "category": "pantry",
+    "pricePence": 95,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["sea salt", "salt", "seasoning"]
+  },
+  {
+    "providerProductId": "prov_pantry_023",
+    "name": "Heinz Tomato Ketchup 460g",
+    "category": "pantry",
+    "pricePence": 215,
+    "unit": "bottle",
+    "thumbnailUrl": null,
+    "searchTokens": ["ketchup", "tomato ketchup", "heinz"]
+  },
+  {
+    "providerProductId": "prov_pantry_024",
+    "name": "Heinz Cream of Tomato Soup 400g",
+    "category": "pantry",
+    "pricePence": 165,
+    "unit": "tin",
+    "thumbnailUrl": null,
+    "searchTokens": ["tomato soup", "soup", "heinz"]
   },
   {
     "providerProductId": "prov_household_001",
@@ -213,7 +561,7 @@
     "pricePence": 600,
     "unit": "pack",
     "thumbnailUrl": null,
-    "searchTokens": ["toilet roll", "tissue", "andrex"]
+    "searchTokens": ["toilet roll", "toilet paper", "andrex", "tissue"]
   },
   {
     "providerProductId": "prov_household_003",
@@ -222,7 +570,7 @@
     "pricePence": 425,
     "unit": "pack",
     "thumbnailUrl": null,
-    "searchTokens": ["paper towel", "kitchen towel", "plenty"]
+    "searchTokens": ["paper towel", "kitchen towel", "kitchen roll", "plenty"]
   },
   {
     "providerProductId": "prov_household_004",
@@ -231,7 +579,7 @@
     "pricePence": 750,
     "unit": "pack",
     "thumbnailUrl": null,
-    "searchTokens": ["dishwasher", "detergent", "finish"]
+    "searchTokens": ["dishwasher tabs", "dishwasher", "detergent", "finish"]
   },
   {
     "providerProductId": "prov_meat_001",
@@ -240,7 +588,7 @@
     "pricePence": 425,
     "unit": "pack",
     "thumbnailUrl": null,
-    "searchTokens": ["chicken", "chicken breast", "poultry"]
+    "searchTokens": ["chicken breast", "chicken", "poultry"]
   },
   {
     "providerProductId": "prov_meat_002",
@@ -249,7 +597,7 @@
     "pricePence": 425,
     "unit": "pack",
     "thumbnailUrl": null,
-    "searchTokens": ["beef", "mince", "beef mince"]
+    "searchTokens": ["beef mince", "beef", "mince", "lean beef mince"]
   },
   {
     "providerProductId": "prov_meat_003",
@@ -258,7 +606,7 @@
     "pricePence": 525,
     "unit": "pack",
     "thumbnailUrl": null,
-    "searchTokens": ["salmon", "fish", "scottish salmon"]
+    "searchTokens": ["salmon", "salmon fillets", "scottish salmon", "fish"]
   },
   {
     "providerProductId": "prov_meat_004",
@@ -270,13 +618,49 @@
     "searchTokens": ["bacon", "streaky bacon"]
   },
   {
+    "providerProductId": "prov_meat_005",
+    "name": "British Chicken Thighs 600g",
+    "category": "meat",
+    "pricePence": 365,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["chicken thighs", "chicken", "poultry"]
+  },
+  {
+    "providerProductId": "prov_meat_006",
+    "name": "British Turkey Breast 500g",
+    "category": "meat",
+    "pricePence": 425,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["turkey breast", "turkey", "poultry"]
+  },
+  {
+    "providerProductId": "prov_meat_007",
+    "name": "Welsh Lamb Mince 500g",
+    "category": "meat",
+    "pricePence": 525,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["lamb mince", "lamb", "mince"]
+  },
+  {
+    "providerProductId": "prov_meat_008",
+    "name": "Sainsbury's Pork Sausages 6-pack",
+    "category": "meat",
+    "pricePence": 285,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["pork sausages", "sausages", "sausage", "pork"]
+  },
+  {
     "providerProductId": "prov_bakery_001",
     "name": "Hovis Soft White Sliced 800g",
     "category": "bakery",
     "pricePence": 145,
     "unit": "loaf",
     "thumbnailUrl": null,
-    "searchTokens": ["bread", "white bread", "hovis"]
+    "searchTokens": ["bread", "white bread", "sliced bread", "hovis"]
   },
   {
     "providerProductId": "prov_bakery_002",
@@ -285,7 +669,7 @@
     "pricePence": 165,
     "unit": "loaf",
     "thumbnailUrl": null,
-    "searchTokens": ["bread", "brown bread", "wholemeal", "warburtons"]
+    "searchTokens": ["bread", "brown bread", "wholemeal", "wholemeal bread", "warburtons"]
   },
   {
     "providerProductId": "prov_bakery_003",
@@ -294,7 +678,41 @@
     "pricePence": 100,
     "unit": "item",
     "thumbnailUrl": null,
-    "searchTokens": ["bread", "baguette", "french bread"]
+    "searchTokens": ["baguette", "french bread", "bread"]
+  },
+  {
+    "providerProductId": "prov_bakery_004",
+    "name": "Old El Paso Low Carb Tortilla Wraps 8-pack",
+    "category": "bakery",
+    "pricePence": 295,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": [
+      "low carb tortillas",
+      "low carb wraps",
+      "low carb tortilla wraps",
+      "tortilla wraps",
+      "tortillas",
+      "wraps"
+    ]
+  },
+  {
+    "providerProductId": "prov_bakery_005",
+    "name": "Mission Original Tortilla Wraps 8-pack",
+    "category": "bakery",
+    "pricePence": 195,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["tortilla wraps", "tortillas", "wraps", "mission"]
+  },
+  {
+    "providerProductId": "prov_bakery_006",
+    "name": "New York Bakery Plain Bagels 5-pack",
+    "category": "bakery",
+    "pricePence": 175,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["bagels", "plain bagels", "bagel", "bread"]
   },
   {
     "providerProductId": "prov_beverages_001",
@@ -303,7 +721,7 @@
     "pricePence": 250,
     "unit": "bottle",
     "thumbnailUrl": null,
-    "searchTokens": ["juice", "orange juice", "tropicana"]
+    "searchTokens": ["orange juice", "juice", "tropicana"]
   },
   {
     "providerProductId": "prov_beverages_002",
@@ -312,7 +730,7 @@
     "pricePence": 175,
     "unit": "pack",
     "thumbnailUrl": null,
-    "searchTokens": ["water", "still water", "highland spring"]
+    "searchTokens": ["still water", "water", "highland spring"]
   },
   {
     "providerProductId": "prov_beverages_003",
@@ -321,7 +739,25 @@
     "pricePence": 65,
     "unit": "bottle",
     "thumbnailUrl": null,
-    "searchTokens": ["water", "sparkling water"]
+    "searchTokens": ["sparkling water", "water", "fizzy water"]
+  },
+  {
+    "providerProductId": "prov_beverages_004",
+    "name": "Nescafé Gold Instant Coffee 100g",
+    "category": "beverages",
+    "pricePence": 525,
+    "unit": "jar",
+    "thumbnailUrl": null,
+    "searchTokens": ["instant coffee", "coffee", "nescafe", "nescafé"]
+  },
+  {
+    "providerProductId": "prov_beverages_005",
+    "name": "PG Tips Tea Bags 80-pack",
+    "category": "beverages",
+    "pricePence": 295,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["tea bags", "tea", "pg tips", "black tea"]
   },
   {
     "providerProductId": "prov_frozen_001",
@@ -330,7 +766,7 @@
     "pricePence": 245,
     "unit": "pack",
     "thumbnailUrl": null,
-    "searchTokens": ["peas", "frozen peas", "birds eye"]
+    "searchTokens": ["frozen peas", "peas", "birds eye"]
   },
   {
     "providerProductId": "prov_frozen_002",
@@ -339,7 +775,25 @@
     "pricePence": 295,
     "unit": "item",
     "thumbnailUrl": null,
-    "searchTokens": ["pizza", "frozen pizza", "margherita"]
+    "searchTokens": ["frozen pizza", "pizza", "margherita pizza", "margherita", "goodfellas"]
+  },
+  {
+    "providerProductId": "prov_frozen_003",
+    "name": "Häagen-Dazs Vanilla Ice Cream 460ml",
+    "category": "frozen",
+    "pricePence": 425,
+    "unit": "tub",
+    "thumbnailUrl": null,
+    "searchTokens": ["vanilla ice cream", "ice cream", "haagen-dazs", "häagen-dazs"]
+  },
+  {
+    "providerProductId": "prov_frozen_004",
+    "name": "Birds Eye Fish Fingers 12-pack",
+    "category": "frozen",
+    "pricePence": 295,
+    "unit": "pack",
+    "thumbnailUrl": null,
+    "searchTokens": ["fish fingers", "frozen fish", "birds eye"]
   },
   {
     "providerProductId": "prov_other_001",
@@ -357,6 +811,6 @@
     "pricePence": 425,
     "unit": "pack",
     "thumbnailUrl": null,
-    "searchTokens": ["batteries", "aa batteries", "duracell"]
+    "searchTokens": ["aa batteries", "batteries", "duracell"]
   }
 ]

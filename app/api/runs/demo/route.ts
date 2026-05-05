@@ -15,7 +15,7 @@ import { triggerSnapbasketRun } from "@/lib/server/workflow-trigger";
 
 export const dynamic = "force-dynamic";
 
-const DEMO_IMAGE_PATH = path.resolve(process.cwd(), "public/demo/grocery-note-sample.png");
+const DEMO_IMAGE_PATH = path.resolve(process.cwd(), "public/demo/grocery-note-sample.webp");
 
 export async function POST() {
   let bytes: Uint8Array;

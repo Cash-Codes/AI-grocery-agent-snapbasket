@@ -66,9 +66,13 @@ export const matchProducts = task({
           throw new Error(`matchProducts: intent ${input.intentId} not found`);
         }
 
+        // Don't pass intent.category - the parser's inferred category is often
+        // wrong (eg., "tomato paste" infers "produce" because of the "tomato"
+        // word, but the matching product lives in "pantry"). The token scorer
+        // and 0.55 acceptance threshold handle relevance correctly across
+        // categories without the filter.
         const matches = await commerceProvider.searchProducts({
           canonicalName: intent.canonicalName,
-          category: intent.category,
           limit: 5,
         });
 

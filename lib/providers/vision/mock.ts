@@ -25,7 +25,7 @@ export class MockVisionProvider implements VisionProvider {
       confidence: 0.95,
       rawProviderResponse: {
         provider: "mock",
-        note: "deterministic transcription matching public/demo/grocery-note-sample.png",
+        note: "deterministic transcription matching public/demo/grocery-note-sample.webp",
       },
     };
   }

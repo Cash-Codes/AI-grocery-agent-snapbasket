@@ -32,16 +32,42 @@ type CatalogEntry = z.infer<typeof CatalogEntrySchema>;
 // validate the bundled catalog at module load with fail fast on malformed data.
 const CATALOG: readonly CatalogEntry[] = z.array(CatalogEntrySchema).parse(catalogJson);
 
+// Reject candidates below this score so partial substring matches don't surface
+// as misleading low confidence matches (eg., "cottage cheese" -> "cheese" -> Cheddar)
+const MIN_ACCEPTANCE = 0.55;
+
+function wordSet(s: string): Set<string> {
+  return new Set(
+    s
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]/g, " ")
+      .split(/\s+/)
+      .filter((w) => w.length > 0),
+  );
+}
+
+// Score a query against a list of search tokens using word-set overlap. An exact
+// token match returns 1.0. Otherwise returns min(tokenCoverage, queryCoverage)
+// - penalising cases where the token covers a fraction of the query (eg., a
+// generic "cheese" token vs a specific "cottage cheese" query).
 function tokenScore(query: string, tokens: readonly string[]): number {
   const q = query.trim().toLowerCase();
   if (q.length === 0) return 0;
+  const queryWords = wordSet(q);
+  if (queryWords.size === 0) return 0;
   let best = 0;
   for (const token of tokens) {
     const t = token.toLowerCase();
-    if (t === q) return 1; // exact match wins immediately
-    if (t.includes(q) || q.includes(t)) {
-      best = Math.max(best, 0.5);
-    }
+    if (t === q) return 1;
+    const tokenWords = wordSet(t);
+    if (tokenWords.size === 0) continue;
+    let intersect = 0;
+    for (const w of tokenWords) if (queryWords.has(w)) intersect++;
+    if (intersect === 0) continue;
+    const tokenCoverage = intersect / tokenWords.size;
+    const queryCoverage = intersect / queryWords.size;
+    const score = Math.min(tokenCoverage, queryCoverage);
+    if (score > best) best = score;
   }
   return best;
 }
@@ -60,7 +86,7 @@ export class MockUcpCommerceProvider implements CommerceProvider {
         entry,
         score: tokenScore(q.canonicalName, entry.searchTokens),
       }))
-      .filter((row) => row.score > 0)
+      .filter((row) => row.score >= MIN_ACCEPTANCE)
       .sort((a, b) => {
         // Primary, score descending, for tiebreak - providerProductId alphabetical so deterministic
         if (b.score !== a.score) return b.score - a.score;

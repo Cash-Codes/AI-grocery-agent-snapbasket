@@ -1,5 +1,6 @@
 "use client";
 
+import { ImagePlus, Loader2, RotateCcw, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 
@@ -50,7 +51,6 @@ export function UploadCard() {
   function onInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (file) handleFile(file);
-    // reset so re-selecting the same file fires onChange
     e.target.value = "";
   }
 
@@ -76,7 +76,6 @@ export function UploadCard() {
     setState({ kind: "uploading", file });
 
     try {
-      // 1: upload bytes
       const form = new FormData();
       form.append("file", file);
       const uploadRes = await fetch("/api/upload", { method: "POST", body: form });
@@ -88,7 +87,6 @@ export function UploadCard() {
       }
       const upload = (await uploadRes.json()) as { imageId: string };
 
-      // 2: start a workflow run
       const runRes = await fetch("/api/runs", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -123,23 +121,50 @@ export function UploadCard() {
       : state.kind === "error" && state.file
         ? state.file.name
         : null;
+  const fileSize =
+    state.kind === "selected" || state.kind === "uploading"
+      ? `${(state.file.size / 1024).toFixed(0)} KB`
+      : null;
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-3.5">
       <div
         onDragOver={onDragOver}
         onDragLeave={onDragLeave}
         onDrop={onDrop}
         onClick={state.kind === "idle" ? onPickClick : undefined}
+        role={state.kind === "idle" ? "button" : undefined}
+        tabIndex={state.kind === "idle" ? 0 : undefined}
+        onKeyDown={(e) => {
+          if (state.kind !== "idle") return;
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            onPickClick();
+          }
+        }}
         className={[
-          "rounded-2xl border-2 border-dashed p-8 text-center transition-colors",
+          "ring-frost relative overflow-hidden rounded-2xl border px-7 py-12 text-center transition-all duration-300",
           isDragging
-            ? "border-zinc-900 bg-zinc-50"
+            ? "border-primary/60 bg-primary/[0.06] scale-[1.01] shadow-[0_0_0_4px_oklch(0.55_0.165_153/0.16)]"
             : state.kind === "idle"
-              ? "cursor-pointer border-zinc-300 hover:border-zinc-500 hover:bg-zinc-50"
-              : "border-zinc-300",
+              ? "border-border bg-card hover:border-primary/40 hover:shadow-[0_8px_28px_-8px_oklch(0.55_0.165_153/0.18)] cursor-pointer"
+              : "border-border bg-card",
         ].join(" ")}
       >
+        {/* shimmer overlay during upload */}
+        {state.kind === "uploading" && (
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 -translate-x-full"
+            style={{
+              background:
+                "linear-gradient(90deg, transparent, oklch(0.55 0.165 153 / 0.10), transparent)",
+              animation: "shimmer 2s linear infinite",
+              backgroundSize: "200% 100%",
+            }}
+          />
+        )}
+
         <input
           ref={inputRef}
           type="file"
@@ -147,35 +172,101 @@ export function UploadCard() {
           className="hidden"
           onChange={onInputChange}
         />
+
         {state.kind === "idle" && (
-          <div className="space-y-1">
-            <p className="text-sm font-medium text-zinc-900">
-              Drop a grocery list image here, or click to select
-            </p>
-            <p className="text-xs text-zinc-500">PNG, JPEG, or WebP · up to 8 MB</p>
+          <div className="flex flex-col items-center gap-3.5">
+            <div
+              className={[
+                "border-border/60 bg-secondary/60 flex size-12 items-center justify-center rounded-xl border transition-all duration-300",
+                isDragging
+                  ? "border-primary/50 bg-primary/15 scale-110"
+                  : "group-hover:border-primary/30",
+              ].join(" ")}
+            >
+              <ImagePlus
+                className={[
+                  "size-5 transition-colors",
+                  isDragging ? "text-primary" : "text-muted-foreground",
+                ].join(" ")}
+                strokeWidth={1.75}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <p className="text-foreground text-sm font-medium">
+                Drop a grocery list image here, or click to select
+              </p>
+              <p className="text-muted-foreground/80 font-mono text-[10.5px] uppercase tracking-[0.18em]">
+                PNG, JPEG, or WebP · up to 8 MB
+              </p>
+            </div>
           </div>
         )}
-        {fileName && <p className="break-all font-mono text-xs text-zinc-700">{fileName}</p>}
-        {state.kind === "uploading" && (
-          <p className="mt-2 text-xs text-zinc-500">Uploading and starting run...</p>
+
+        {(state.kind === "selected" || state.kind === "uploading") && (
+          <div className="flex flex-col items-center gap-3">
+            <div className="bg-primary/15 ring-primary/30 flex size-12 items-center justify-center rounded-xl ring-1">
+              {state.kind === "uploading" ? (
+                <Loader2 className="text-primary size-5 animate-spin" strokeWidth={1.75} />
+              ) : (
+                <ImagePlus className="text-primary size-5" strokeWidth={1.75} />
+              )}
+            </div>
+            <div className="space-y-1">
+              <p className="text-foreground/90 max-w-[28ch] truncate text-sm font-medium">
+                {fileName}
+              </p>
+              <p className="text-muted-foreground/80 font-mono text-[10.5px] uppercase tracking-[0.16em]">
+                {state.kind === "uploading" ? "Uploading and starting run..." : fileSize}
+              </p>
+            </div>
+          </div>
         )}
-        {state.kind === "error" && <p className="mt-2 text-sm text-red-600">{state.message}</p>}
+
+        {state.kind === "error" && (
+          <div className="flex flex-col items-center gap-3">
+            <div className="bg-destructive/15 ring-destructive/30 flex size-12 items-center justify-center rounded-xl ring-1">
+              <X className="text-destructive size-5" strokeWidth={1.75} />
+            </div>
+            <div className="space-y-1">
+              {fileName && (
+                <p className="text-foreground/70 max-w-[28ch] truncate text-sm">{fileName}</p>
+              )}
+              <p className="text-destructive text-[13.5px]">{state.message}</p>
+            </div>
+          </div>
+        )}
       </div>
 
       {state.kind === "selected" && (
-        <div className="flex gap-2">
-          <Button size="lg" onClick={startRun} disabled={isBusy} className="rounded-full px-6">
+        <div className="animate-fade-in flex gap-2">
+          <Button
+            size="lg"
+            onClick={startRun}
+            disabled={isBusy}
+            className="bg-primary text-primary-foreground hover:bg-primary/90 h-11 flex-1 rounded-xl text-sm font-semibold shadow-[0_10px_24px_-8px_oklch(0.55_0.165_153/0.45)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_32px_-8px_oklch(0.55_0.165_153/0.55)]"
+          >
             Start run
           </Button>
-          <Button size="lg" variant="outline" onClick={reset} className="rounded-full px-6">
+          <Button
+            size="lg"
+            variant="outline"
+            onClick={reset}
+            className="border-border/70 hover:bg-secondary hover:border-border h-11 rounded-xl px-5 text-sm font-medium transition-colors"
+          >
             Change file
           </Button>
         </div>
       )}
 
       {state.kind === "error" && (
-        <div className="flex gap-2">
-          <Button size="lg" variant="outline" onClick={reset} className="rounded-full px-6">
+        <div className="animate-fade-in flex gap-2">
+          <Button
+            size="lg"
+            variant="outline"
+            onClick={reset}
+            className="border-border/70 hover:bg-secondary hover:border-border h-11 rounded-xl text-sm font-medium transition-colors"
+          >
+            <RotateCcw className="mr-2 size-3.5" strokeWidth={2} />
             Try again
           </Button>
         </div>

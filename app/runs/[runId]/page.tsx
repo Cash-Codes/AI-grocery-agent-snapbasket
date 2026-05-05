@@ -7,7 +7,7 @@ interface PageProps {
 export default async function RunPage({ params }: PageProps) {
   const { runId } = await params;
   return (
-    <main className="mx-auto max-w-2xl px-6 py-12">
+    <main className="relative mx-auto w-full max-w-6xl px-6 pb-24 pt-14 sm:pt-20">
       <RunView runId={runId} />
     </main>
   );

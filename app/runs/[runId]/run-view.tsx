@@ -4,9 +4,10 @@ import { ApprovalCard } from "@/components/ApprovalCard";
 import { BasketReview } from "@/components/BasketReview";
 import { IntentList } from "@/components/IntentList";
 import { ReceiptCard } from "@/components/ReceiptCard";
+import { RunImagePreview } from "@/components/RunImagePreview";
+import { RunProgress } from "@/components/RunProgress";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { WorkflowTimeline } from "@/components/WorkflowTimeline";
 import type { WorkflowEventRow } from "@/lib/db/schema";
@@ -19,8 +20,12 @@ export function RunView({ runId }: { runId: string }) {
   if (error && !data) {
     return (
       <div className="space-y-3">
-        <p className="text-sm text-red-600">Couldn&apos;t load run: {error.message}</p>
-        <Button variant="outline" onClick={() => void refetch()}>
+        <p className="text-destructive text-sm">Couldn&apos;t load run: {error.message}</p>
+        <Button
+          variant="outline"
+          onClick={() => void refetch()}
+          className="border-border/70 hover:border-primary/40 hover:bg-primary/10 rounded-xl"
+        >
           Retry
         </Button>
       </div>
@@ -30,9 +35,9 @@ export function RunView({ runId }: { runId: string }) {
   if (!data) {
     return (
       <div className="space-y-4">
-        <Skeleton className="h-8 w-48" />
-        <Skeleton className="h-32 w-full" />
-        <Skeleton className="h-64 w-full" />
+        <Skeleton className="bg-secondary/60 h-9 w-48 rounded-xl" />
+        <Skeleton className="bg-secondary/60 h-32 w-full rounded-2xl" />
+        <Skeleton className="bg-secondary/60 h-64 w-full rounded-2xl" />
       </div>
     );
   }
@@ -41,93 +46,113 @@ export function RunView({ runId }: { runId: string }) {
 
   return (
     <div className="space-y-8">
-      <header className="flex flex-col gap-3">
-        <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-semibold tracking-tight">Run</h1>
+      <header className="animate-fade-up space-y-3" style={{ ["--stagger" as string]: "0ms" }}>
+        <p className="text-muted-foreground/80 inline-flex items-center gap-2 font-mono text-[10.5px] uppercase tracking-[0.22em]">
+          <span aria-hidden className="bg-primary/40 inline-block h-px w-5" />
+          Run detail
+        </p>
+        <div className="flex flex-wrap items-center gap-3">
+          <h1 className="text-foreground text-3xl font-semibold tracking-[-0.02em] sm:text-4xl">
+            Run
+          </h1>
           <StatusBadge status={status} />
         </div>
-        <p className="break-all font-mono text-xs text-zinc-500">
+        <p className="text-muted-foreground/70 break-all font-mono text-[11px]">
           {data.run.id} · {data.run.correlationId}
         </p>
       </header>
 
-      <Card className="border-zinc-200">
-        <CardContent className="space-y-4 p-6">
-          <h2 className="text-sm font-medium uppercase tracking-wide text-zinc-500">
-            Workflow timeline
-          </h2>
-          <WorkflowTimeline events={data.events as WorkflowEventRow[]} />
-        </CardContent>
-      </Card>
+      <RunProgress events={data.events as WorkflowEventRow[]} status={status} />
 
-      {data.intents.length > 0 && (
-        <IntentList
-          intents={data.intents as never}
-          candidatesByIntent={data.candidatesByIntent as never}
-        />
-      )}
+      <div className="grid gap-6 lg:grid-cols-[320px_minmax(0,1fr)] lg:items-start lg:gap-8">
+        {/* Left rail - sticky on lg, stacks above on mobile */}
+        <aside
+          className="animate-fade-up lg:sticky lg:top-16 lg:max-h-[calc(100vh-5rem)] lg:overflow-y-auto"
+          style={{ ["--stagger" as string]: "80ms" }}
+        >
+          <section className="ring-frost border-border bg-card rounded-2xl border p-5">
+            <div className="mb-4 flex items-baseline justify-between">
+              <h2 className="text-muted-foreground/80 font-mono text-[10.5px] uppercase tracking-[0.22em]">
+                Workflow timeline
+              </h2>
+            </div>
+            <WorkflowTimeline events={data.events as WorkflowEventRow[]} />
+          </section>
+        </aside>
 
-      {Boolean(data.basket) && (
-        <BasketReview
-          basket={data.basket as never}
-          items={data.items as never}
-          candidatesByIntent={data.candidatesByIntent as never}
-          policy={data.policy as never}
-        />
-      )}
+        {/* Main column - source image + items + basket + decision */}
+        <div className="space-y-6">
+          {data.intents.length > 0 && <RunImagePreview imageId={data.run.imageId} />}
 
-      {status === "AWAITING_APPROVAL" && Boolean(data.basket) && Boolean(data.policy) && (
-        <ApprovalCard
-          runId={runId}
-          flags={JSON.parse((data.policy as { flagsJson: string }).flagsJson) as PolicyFlag[]}
-          requiresExplicitApproval={
-            (data.policy as { requiresExplicitApproval: boolean }).requiresExplicitApproval
-          }
-          onApproved={() => void refetch()}
-        />
-      )}
+          {data.intents.length > 0 && (
+            <IntentList
+              intents={data.intents as never}
+              candidatesByIntent={data.candidatesByIntent as never}
+            />
+          )}
 
-      {status === "COMPLETED" && Boolean(data.basket) && (
-        <ReceiptCard
-          totalPence={(data.basket as { totalPence: number }).totalPence}
-          sessionId={
-            (data.checkoutSession as { providerSessionId: string } | null)?.providerSessionId ??
-            null
-          }
-        />
-      )}
+          {Boolean(data.basket) && (
+            <BasketReview
+              basket={data.basket as never}
+              items={data.items as never}
+              candidatesByIntent={data.candidatesByIntent as never}
+              policy={data.policy as never}
+            />
+          )}
 
-      {status === "REJECTED" && (
-        <Card className="border-zinc-300 bg-zinc-50">
-          <CardContent className="p-6">
-            <p className="text-sm text-zinc-700">Run rejected. No checkout finalized.</p>
-          </CardContent>
-        </Card>
-      )}
+          {status === "AWAITING_APPROVAL" && Boolean(data.basket) && Boolean(data.policy) && (
+            <ApprovalCard
+              runId={runId}
+              flags={JSON.parse((data.policy as { flagsJson: string }).flagsJson) as PolicyFlag[]}
+              requiresExplicitApproval={
+                (data.policy as { requiresExplicitApproval: boolean }).requiresExplicitApproval
+              }
+              onApproved={() => void refetch()}
+            />
+          )}
 
-      {status === "TIMED_OUT" && (
-        <Card className="border-zinc-300 bg-zinc-50">
-          <CardContent className="p-6">
-            <p className="text-sm text-zinc-700">Approval timed out (24h elapsed). Run ended.</p>
-          </CardContent>
-        </Card>
-      )}
+          {status === "COMPLETED" && Boolean(data.basket) && (
+            <ReceiptCard
+              totalPence={(data.basket as { totalPence: number }).totalPence}
+              sessionId={
+                (data.checkoutSession as { providerSessionId: string } | null)?.providerSessionId ??
+                null
+              }
+            />
+          )}
 
-      {status === "FAILED" && (
-        <Card className="border-red-300 bg-red-50">
-          <CardContent className="space-y-2 p-6">
-            <p className="text-sm font-medium text-red-700">Workflow failed.</p>
-            {data.run.failureStep && (
-              <p className="text-sm text-zinc-700">
-                Failed at step:{" "}
-                <code className="rounded bg-zinc-100 px-1.5 py-0.5 text-xs">
-                  {data.run.failureStep}
-                </code>
+          {status === "REJECTED" && (
+            <div className="ring-frost border-border bg-card animate-fade-up rounded-2xl border p-6">
+              <p className="text-foreground/80 text-sm">Run rejected. No checkout finalized.</p>
+            </div>
+          )}
+
+          {status === "TIMED_OUT" && (
+            <div className="ring-frost border-border bg-card animate-fade-up rounded-2xl border p-6">
+              <p className="text-foreground/80 text-sm">
+                Approval timed out (24h elapsed). Run ended.
               </p>
-            )}
-          </CardContent>
-        </Card>
-      )}
+            </div>
+          )}
+
+          {status === "FAILED" && (
+            <div className="ring-frost border-destructive/40 bg-destructive/[0.05] animate-fade-up space-y-2 rounded-2xl border p-6">
+              <p className="text-destructive inline-flex items-center gap-2 font-mono text-[10.5px] uppercase tracking-[0.22em]">
+                <span aria-hidden className="bg-destructive inline-block size-1.5 rounded-full" />
+                Workflow failed
+              </p>
+              {data.run.failureStep && (
+                <p className="text-foreground/80 text-sm">
+                  Failed at step:{" "}
+                  <code className="bg-secondary border-border/60 rounded-md border px-1.5 py-0.5 font-mono text-xs">
+                    {data.run.failureStep}
+                  </code>
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
