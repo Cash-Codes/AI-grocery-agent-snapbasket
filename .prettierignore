@@ -1,0 +1,9 @@
+.next
+node_modules
+coverage
+drizzle
+pnpm-lock.yaml
+*.tsbuildinfo
+next-env.d.ts
+public/demo
+docs

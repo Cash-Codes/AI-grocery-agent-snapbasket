@@ -1,0 +1,39 @@
+# Source-control + tooling
+.git
+.gitignore
+.github
+
+# Dependencies
+node_modules
+.pnpm-store
+
+# Build outputs
+.next
+out
+dist
+build
+
+# Local data
+data
+coverage
+
+# Editor / OS
+.vscode
+.idea
+.DS_Store
+*.swp
+
+# Env files
+.env
+.env.local
+.env.*.local
+
+# Tests + dev artifacts
+tests
+*.test.ts
+*.test.tsx
+
+docs/_private
+
+# Trigger.dev local artifacts
+.trigger
