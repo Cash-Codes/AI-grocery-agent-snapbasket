@@ -24,11 +24,11 @@ const STEP_LABELS: Record<string, string> = {
 // Plain-language explainer per step. Surfaced when a row is expanded so a
 // reviewer can see what each task does without reading source.
 const STEP_DESCRIPTIONS: Record<string, string> = {
-  ingestImage: "Hash the uploaded image, dedup against prior runs, and persist the bytes to disk.",
+  ingestImage: "Hash the uploaded image, dedup against prior runs and persist the bytes to disk.",
   extractRawTextFromImage:
     "Send the image to the vision provider (mock or OpenAI) and get back a raw transcription of what's written on the list.",
   parseGroceryIntent:
-    "Split the transcription into per-item intents - extract quantity, unit, hedge phrases, and a canonical name per line. Compound items (“red + green pepper”) split into separate intents here.",
+    "Split the transcription into per-item intents - extract quantity, unit, hedge phrases and a canonical name per line. Compound items (“red + green pepper”) split into separate intents here.",
   normalizeItems:
     "Apply canonical name mappings (e.g. “tomatoes” → “tomato”, “yoghurt” → “yogurt”) and infer a category for each intent.",
   enrichItems:
